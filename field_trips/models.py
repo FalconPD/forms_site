@@ -24,8 +24,8 @@ class FieldTrip(models.Model):
     # General Info
     email = models.EmailField("Submitter", null=True)
     destination = models.CharField(max_length=64)
-    grades = models.ManyToManyField(Grade)
     group = models.CharField("Class / Group / Club", max_length=64)
+    grades = models.ManyToManyField(Grade)
     roster = models.FileField()
     itinerary = models.TextField(help_text=
         ("Please include time at destination, lunch arrangements, and "
@@ -37,7 +37,7 @@ class FieldTrip(models.Model):
 
     # Transportation
     directions = models.FileField()
-    buses = models.IntegerField()
+    buses = models.IntegerField("Number of Buses Required", help_text="Each bus seats 52 people.")
     extra_vehicles = models.ManyToManyField(Vehicle, verbose_name="Additional Vehicles Required")
     transported_by = models.CharField(max_length=64)
     transportation_comments = models.TextField()

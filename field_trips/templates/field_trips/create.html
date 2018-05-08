@@ -1,30 +1,226 @@
-<head>
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
-</head>
-<html>
-  <div class="container">
-    <div class="row">
-      <div class="col-sm">
+{% extends "field_trips/base.html" %}
+
+{% load static %}
+
+{% block head %}
+    <!-- this lets us dynamically add chaperones -->
+    <script src="{% static "field_trips/jquery.formset.js" %}"></script>
+    <!-- setup jquery UI date pickers for our two date inputs #} -->
+    <script>
+    $( function() {
+        $( "#{{ form.departing.id_for_label }}" ).datetimepicker({
+            controlType: 'select',
+            onLine: true,
+            timeFormat: 'hh:mm tt'});
+        $( "#{{ form.returning.id_for_label }}" ).datetimepicker({
+            controlType: 'select',
+            onLine: true,
+            timeFormat: 'hh:mm tt'});
+        $( ".chaperones_row" ).formset();
+    });
+    </script>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm">
         <h2>Field Trip Request</h2>
-      </div>
     </div>
-    <form action="{% url 'field_trips:create' %}" method="post">
-      {% csrf_token %}
-      <div class="row">
-        <div class="col-sm">
-          <div class="form-group">
-            <label for="destination">Destination</label>
-            <input type="text" class="form-control" id="destination">
-          </div>
+</div>
+<div class="row">
+    {{ form.non_field_errors }}
+</div>
+<form action="{% url 'field_trips:create' %}" method="post">
+    {% csrf_token %}
+
+    <!-- General Info -->
+    <div class="row"><div class="col-sm"><h3>General Information</h3></div></div>
+    <div class="row">
+        <div class="col-md">
+            <div class="form-group">
+                {{ form.destination.errors }}
+                {{ form.destination.label_tag }}
+                {{ form.destination }}
+                <small class="form-text text-muted">{{ form.destination.help_text }}</small>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-group">
+                {{ form.group.errors }}
+                {{ form.group.label_tag }}
+                {{ form.group }}
+                <small class="form-text text-muted">{{ form.group.help_text }}</small>
+            </div>
         </div>
         <div class="col-sm">
-          <div class="form-group">
-            <label for="group">Class / Group / Club</label>
-            <input type="text" class="form-control" id="group">
-          </div>
+            <div class="form-group">
+                {{ form.pupils.errors }}
+                {{ form.pupils.label_tag }}
+                {{ form.pupils }}
+                <small class="form-text text-muted">{{ form.pupils.help_text }}</small>
+            </div>
         </div>
-      </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-  </div>
-</html>
+        <div class="col-sm">
+            <div class="form-group">
+                {{ form.teachers.errors }}
+                {{ form.teachers.label_tag }}
+                {{ form.teachers }}
+                <small class="form-text text-muted">{{ form.teachers.help_text }}</small>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <div class="form-group">
+                {{ form.departing.errors }}
+                {{ form.departing.label_tag }}
+                {{ form.departing }}
+                <small class="form-text text-muted">{{ form.departing.help_text }}</small>
+            </div>
+        </div>
+        <div class="col-sm">
+            <div class="form-group">
+                {{ form.returning.errors }}
+                {{ form.returning.label_tag }}
+                {{ form.returning }}
+                <small class="form-text text-muted">{{ form.returning.help_text }}</small>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <div class="form-group">
+                {{ form.grades.errors }}
+                {{ form.grades.label_tag }}
+                {{ form.grades }}
+                <small class="form-text text-muted">Hold CTRL to select multiple grades</small>
+                <small class="form-text text-muted">{{ form.grades.help_text }}</small>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-group">
+                {{ form.roster.errors }}
+                {{ form.roster.label_tag }}
+                {{ form.roster }}
+                <a href="http://youtube.com" target="_blank">
+                    <small class="form-text text-muted">
+                        Click here to learn how to create rosters in Genesis.
+                    </small>
+                </a>
+                <small class="form-text text-muted">{{ form.roster.help_text }}</small>
+            </div>
+        </div>
+    </div>
+    <div class="row"><div class="col-sm">Chaperones:</div></div>
+    {{ formset.management_form }}
+    {% for form in formset %}
+        <div class="row chaperones_row">
+            <div class="col-sm">
+                <div class="form-group">
+                    {{ form.name.errors }}
+                    {{ form.name.label_tag }}
+                    {{ form.name }}
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="form-group">
+                    {{ form.phone_number.errors }}
+                    {{ form.phone_number.label_tag }}
+                    {{ form.phone_number }}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <div class="row">
+        <div class="col-sm">
+            <div class="form-group">
+                {{ form.itinerary.errors }}
+                {{ form.itinerary.label_tag }}
+                {{ form.itinerary }}
+                <small class="form-text text-muted">{{ form.itinerary.help_text }}</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transportation -->
+    <div class="row"><div class="col-sm"><h3>Transportation</h3></div></div>
+    <div class="row">
+        <div class="col-sm">
+            <div class="form-group">
+                {{ form.buses.errors }}
+                {{ form.buses.label_tag }}
+                {{ form.buses }}
+                <small class="form-text text-muted">{{ form.buses.help_text }}</small>
+            </div>
+        </div>
+        <div class="col-sm">
+            <div class="form-group">
+                {{ form.extra_vehicles.errors }}
+                {{ form.extra_vehicles.label_tag }}
+                {{ form.extra_vehicles }}
+                <small class="form-text text-muted">Hold CTRL to select multiple vehicles</small>
+                <small class="form-text text-muted">{{ form.extra_vehicle.help_text }}</small>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-group">
+                {{ form.directions.errors }}
+                {{ form.directions.label_tag }}
+                {{ form.directions }}
+                <a href="http://youtube.com" target="_blank">
+                    <small class="form-text text-muted">
+                        Click here to learn how to create a PDF of your directions.
+                    </small>
+                </a>
+                <small class="form-text text-muted">{{ form.directions.help_text }}</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Funding -->
+    <div class="row"><div class="col-sm"><h3>Funding</h3></div></div>
+    <div class="row">
+        <div class="col-md">
+            {{ form.costs.errors }}
+            {{ form.costs.label_tag }}
+            {{ form.costs }}
+            <small class="form-text text-muted">{{ form.costs.help_text }}</small>
+        </div>
+        <div class="col-sm-2">
+            {{ form.funds.errors }}
+            {{ form.funds.label_tag }}
+            {{ form.funds }}
+            <small class="form-text text-muted">{{ form.funds.help_text }}</small>
+        </div>
+    </div>
+
+    <!-- Curricular Tie Ins -->
+    <div class="row"><div class="col-sm"><h3>Curricular Tie Ins</h3></div></div>
+    <div class="row">
+        <div class="col-md">
+            {{ form.standards.errors }}
+            {{ form.standards.label_tag }}
+            {{ form.standards }}
+            <small class="form-text text-muted">{{ form.standards.help_text }}</small>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md">
+            {{ form.anticipatory.errors }}
+            {{ form.anticipatory.label_tag }}
+            {{ form.anticipatory }}
+            <small class="form-text text-muted">{{ form.anticipatory.help_text }}</small>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md">
+            {{ form.purpose.errors }}
+            {{ form.purpose.label_tag }}
+            {{ form.purpose }}
+            <small class="form-text text-muted">{{ form.purpose.help_text }}</small>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock %}

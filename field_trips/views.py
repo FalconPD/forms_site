@@ -1,11 +1,10 @@
 from django.shortcuts import render
-from django.forms import modelformset_factory
+from django.forms import formset_factory
 
-from .forms import CreateForm
-from .models import Chaperone
+from .forms import CreateForm, ChaperoneForm
 
 def create(request):
-    ChaperoneFormSet = modelformset_factory(Chaperone, fields=['name', 'phone_number'], extra=2)
-    chaperone_formset = ChaperoneFormSet()
+    FormSet = formset_factory(ChaperoneForm, extra=1)
+    formset = FormSet()
     form = CreateForm()
-    return render(request, 'field_trips/create.html', {'form': form, 'chaperone_formset': chaperone_formset})
+    return render(request, 'field_trips/create.html', {'form': form, 'formset': formset})
