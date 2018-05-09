@@ -1,0 +1,20 @@
+{{ formset.management_form }}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Chaperone Name:</th>
+            <th>Phone Number:</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for form in formset %}
+        <tr class="chaperones">
+            {{ form.name.errors }}
+            <td>{{ form.name }}</td>
+            {{ form.phone_number.errors }}
+            <td>{{ form.phone_number }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
