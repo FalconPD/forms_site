@@ -1,3 +1,5 @@
+{% load widget_tweaks %}
+
 {{ formset.management_form }}
 
 <table class="table">
@@ -9,12 +11,10 @@
     </thead>
     <tbody>
         {% for form in formset %}
-        <tr class="chaperones">
-            {{ form.name.errors }}
-            <td>{{ form.name }}</td>
-            {{ form.phone_number.errors }}
-            <td>{{ form.phone_number }}</td>
-        </tr>
+            <tr class="chaperones">
+                {% include "field_trips/table_data.html" with field=form.name %}
+                {% include "field_trips/table_data.html" with field=form.phone_number %}
+            </tr>
         {% endfor %}
     </tbody>
 </table>

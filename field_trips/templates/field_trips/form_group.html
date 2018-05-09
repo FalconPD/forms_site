@@ -1,0 +1,19 @@
+{% load widget_tweaks %}
+
+<div class="form-group">
+    {{ field.label_tag }}
+    {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+    {% if field|widget_type == "selectmultiple" %}
+        <small class="form-text text-muted">
+            Hold down "Control", or "Command" on a Mac, to select more than one.
+        </small>
+    {% endif %}
+    {% if field.help_text %}
+        <small class="form-text text-muted">{{ field.help_text }}</small>
+    {% endif %}
+    {% if field.errors %}
+        {% for error in field.errors %}
+            <div class="invalid-feedback">{{ error }}</div>
+        {% endfor %}
+    {% endif %}
+</div>

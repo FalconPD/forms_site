@@ -1,54 +1,28 @@
 <div class="row">
     <div class="col-sm">
-        <div class="form-group">
-            {{ form.buses.errors }}
-            {{ form.buses.label_tag }}
-            {{ form.buses }}
-            <small class="form-text text-muted">{{ form.buses.help_text }}</small>
-        </div>
+        {% include "field_trips/form_group.html" with field=form.buses %}
     </div>
     <div class="col-sm">
-        <div class="form-group">
-            {{ form.extra_vehicles.errors }}
-            {{ form.extra_vehicles.label_tag }}
-            {{ form.extra_vehicles }}
-            <small class="form-text text-muted">Hold CTRL to select multiple vehicles</small>
-            <small class="form-text text-muted">{{ form.extra_vehicle.help_text }}</small>
-        </div>
+        {% include "field_trips/form_group.html" with field=form.extra_vehicles %}
     </div>
     <div class="col-lg">
-        <div class="form-group">
-            {{ form.directions.errors }}
-            {{ form.directions.label_tag }}
-            {{ form.directions }}
-            <a href="http://youtube.com" target="_blank">
-                <small class="form-text text-muted">
-                    Click here to learn how to create a PDF of your directions.
-                </small>
-            </a>
-            <small class="form-text text-muted">{{ form.directions.help_text }}</small>
-        </div>
+        {% include "field_trips/form_group.html" with field=form.directions %}
+        <a href="http://youtube.com" target="_blank">
+            <small class="form-text text-muted">
+                Click here to learn how to create a PDF of your directions.
+            </small>
+        </a>
     </div>
 </div>
 
 <div class="row">
     <div class="col-lg">
-        <div class="form-group">
-            {{ form.transported_by.errors }}
-            {{ form.transported_by.label_tag }}
-            {{ form.transported_by }}
-            <small class="form-text text-muted">{{ form.transported_by.help_text }}</small>
-        </div>
+        {% include "field_trips/form_group.html" with field=form.transported_by %}
     </div>
 </div>
 
 <div class="row">
     <div class="col-lg">
-        <div class="form-group">
-            {{ form.transportation_comments.errors }}
-            {{ form.transportation_comments.label_tag }}
-            {{ form.transportation_comments }}
-            <small class="form-text text-muted">{{ form.transportation_comments.help_text }}</small>
-        </div>
+        {% include "field_trips/form_group.html" with field=form.transportation_comments %}
     </div>
 </div>

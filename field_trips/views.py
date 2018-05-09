@@ -5,6 +5,13 @@ from .forms import CreateForm, ChaperoneForm
 
 def create(request):
     FormSet = formset_factory(ChaperoneForm, extra=1)
-    formset = FormSet()
-    form = CreateForm()
+    if request.method == 'POST':
+        form = CreateForm(request.POST)
+        formset = FormSet(request.POST)
+        print(form)
+        if form.is_valid():
+            return HttpResponseRedirect('/thanks/')
+    else:
+        formset = FormSet()
+        form = CreateForm()
     return render(request, 'field_trips/create.html', {'form': form, 'formset': formset})

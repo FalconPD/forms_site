@@ -3,28 +3,25 @@
 {% load static %}
 
 {% block head %}
-    <link rel="stylesheet" type="text/css" href="{% static "field_trips/create.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "field_trips/create.css" %}"></link>
     <!-- this lets us dynamically add chaperones -->
     <script src="{% static "field_trips/jquery.formset.js" %}"></script>
-    <!-- setup jquery UI date pickers for our two date inputs #} -->
-    <script>
-    $( function() {
-        $( "#{{ form.departing.id_for_label }}" ).datetimepicker({
-            controlType: 'select',
-            onLine: true,
-            timeFormat: 'hh:mm tt'});
-        $( "#{{ form.returning.id_for_label }}" ).datetimepicker({
-            controlType: 'select',
-            onLine: true,
-            timeFormat: 'hh:mm tt'});
-        $( ".chaperones" ).formset();
-    }); </script>
+    <script src="{% static "field_trips/field_trips.js" %}"></script>
 {% endblock %}
 
 {% block content %}
+
+{% if form.non_field_errors %}
+<div class="alert alert-danger" role="alert">
+  {% for error in form.non_field_errors %}
+    {{ error }}
+  {% endfor %}
+</div>
+{% endif %}
+
 <div class="row">
     <div class="col-sm">
-        <h2>Field Trip Request</h2>
+        <h2 class="text-center mt-3">Field Trip Request</h2>
     </div>
 </div>
 <div class="row">
@@ -34,101 +31,15 @@
     {% csrf_token %}
 
     <!-- General Info -->
-    <div class="row"><div class="col-sm"><h3>General Information</h3></div></div>
-    <div class="row">
-        <div class="col-md">
-            <div class="form-group">
-                {{ form.destination.errors }}
-                {{ form.destination.label_tag }}
-                {{ form.destination }}
-                <small class="form-text text-muted">{{ form.destination.help_text }}</small>
-            </div>
-        </div>
-        <div class="col-md">
-            <div class="form-group">
-                {{ form.group.errors }}
-                {{ form.group.label_tag }}
-                {{ form.group }}
-                <small class="form-text text-muted">{{ form.group.help_text }}</small>
-            </div>
-        </div>
-        <div class="col-sm">
-            <div class="form-group">
-                {{ form.pupils.errors }}
-                {{ form.pupils.label_tag }}
-                {{ form.pupils }}
-                <small class="form-text text-muted">{{ form.pupils.help_text }}</small>
-            </div>
-        </div>
-        <div class="col-sm">
-            <div class="form-group">
-                {{ form.teachers.errors }}
-                {{ form.teachers.label_tag }}
-                {{ form.teachers }}
-                <small class="form-text text-muted">{{ form.teachers.help_text }}</small>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm">
-            <div class="form-group">
-                {{ form.departing.errors }}
-                {{ form.departing.label_tag }}
-                {{ form.departing }}
-                <small class="form-text text-muted">{{ form.departing.help_text }}</small>
-            </div>
-        </div>
-        <div class="col-sm">
-            <div class="form-group">
-                {{ form.returning.errors }}
-                {{ form.returning.label_tag }}
-                {{ form.returning }}
-                <small class="form-text text-muted">{{ form.returning.help_text }}</small>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm">
-            <div class="form-group">
-                {{ form.grades.errors }}
-                {{ form.grades.label_tag }}
-                {{ form.grades }}
-                <small class="form-text text-muted">Hold CTRL to select multiple grades</small>
-                <small class="form-text text-muted">{{ form.grades.help_text }}</small>
-            </div>
-        </div>
-        <div class="col-md">
-            <div class="form-group">
-                {{ form.roster.errors }}
-                {{ form.roster.label_tag }}
-                {{ form.roster }}
-                <a href="http://youtube.com" target="_blank">
-                    <small class="form-text text-muted">
-                        Click here to learn how to create rosters in Genesis.
-                    </small>
-                </a>
-                <small class="form-text text-muted">{{ form.roster.help_text }}</small>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        {% include "field_trips/chaperones.html" %}
-    </div>
-
-    <div class="row">
-        <div class="col-sm">
-            <div class="form-group">
-                {{ form.itinerary.errors }}
-                {{ form.itinerary.label_tag }}
-                {{ form.itinerary }}
-                <small class="form-text text-muted">{{ form.itinerary.help_text }}</small>
-            </div>
+    <div class="card">
+        <div class="card-header">General Information</div>
+        <div class="card-body">
+            {% include "field_trips/general.html" %}
         </div>
     </div>
 
     <!-- Transportation -->
-    <div class="card mt-3">
+    <div class="card">
         <div class="card-header">Transportation</div>
         <div class="card-body">
             {% include "field_trips/transportation.html" %}      
@@ -136,7 +47,7 @@
     </div>
 
     <!-- Funding -->
-    <div class="card mt-3">
+    <div class="card">
         <div class="card-header">Funding</div>
         <div class="card-body">
             {% include "field_trips/funding.html" %}
@@ -144,7 +55,7 @@
     </div>
 
     <!-- Curricular Tie Ins -->
-    <div class="card mt-3">
+    <div class="card">
         <div class="card-header">Curricular Tie Ins</div>
         <div class="card-body">
             {% include "field_trips/curriculum.html" %}

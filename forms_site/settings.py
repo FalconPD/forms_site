@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'field_trips.apps.FieldTripsConfig',
+    'widget_tweaks',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -119,3 +120,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+from django.conf.global_settings import DATETIME_INPUT_FORMATS
+DATETIME_INPUT_FORMATS += ('%m/%d/%Y %I:%M %p',)

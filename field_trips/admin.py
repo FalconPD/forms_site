@@ -1,14 +1,10 @@
 from django.contrib import admin
 
-from .models import Chaperone, FieldTrip, Vehicle, Grade, Approval
+from .models import Chaperone, FieldTrip, Vehicle, Grade, Role, Approver, Building
 
 class ChaperoneInline(admin.TabularInline):
     model = Chaperone
     extra = 2
-
-class ApprovalInline(admin.TabularInline):
-    model = Approval
-    extra = 6
 
 class FieldTripAdmin(admin.ModelAdmin):
     fieldsets = [
@@ -46,8 +42,11 @@ class FieldTripAdmin(admin.ModelAdmin):
             'nurse_name',
         ]})
     ]
-    inlines = [ChaperoneInline, ApprovalInline]
+    inlines = [ChaperoneInline]
 
 admin.site.register(FieldTrip, FieldTripAdmin)
 admin.site.register(Vehicle)
 admin.site.register(Grade)
+admin.site.register(Role)
+admin.site.register(Approver)
+admin.site.register(Building)

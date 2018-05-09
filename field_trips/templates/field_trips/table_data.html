@@ -1,0 +1,10 @@
+{% load widget_tweaks %}
+
+<td>
+    {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+    {% if field.errors %}
+        {% for error in field.errors %}
+            <div class="invalid-feedback">{{ error }}</div>
+        {% endfor %}
+    {% endif %}
+</td>

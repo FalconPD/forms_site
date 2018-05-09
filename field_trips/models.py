@@ -13,9 +13,36 @@ class Vehicle(models.Model):
     def __str__(self):
         return self.name
 
+class Role(models.Model):
+    code = models.CharField(max_length=32)
+    name = models.CharField(max_length=64)
+
+    def __str__(self):
+        return self.name
+
+class Approver(models.Model):
+    name = models.CharField(max_length=64)
+    title = models.CharField(max_length=64)
+    email = models.EmailField()
+    roles = models.ManyToManyField(Role)
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        buildings = ", ".join(map(str, self.building_set.all()))
+        if len(buildings) > 0:
+            return '{}: {}, {}'.format(self.name, self.title, buildings)
+        else:
+            return '{}: {}'.format(self.name, self.title) 
+
 class Building(models.Model):
     name = models.CharField(max_length=64)
     code = models.CharField(max_length=8)
+    approvers = models.ManyToManyField(Approver)
+
+    class Meta:
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -26,6 +53,7 @@ class FieldTrip(models.Model):
     destination = models.CharField(max_length=64)
     group = models.CharField("Class / Group / Club", max_length=64)
     grades = models.ManyToManyField(Grade)
+    building = models.OneToOneField(Building, on_delete=models.CASCADE, null=True)
     roster = models.FileField()
     itinerary = models.TextField(help_text=
         ("Please include time at destination, lunch arrangements, and "
@@ -38,7 +66,8 @@ class FieldTrip(models.Model):
     # Transportation
     directions = models.FileField()
     buses = models.IntegerField("Number of Buses Required", help_text="Each bus seats 52 people.")
-    extra_vehicles = models.ManyToManyField(Vehicle, verbose_name="Additional Vehicles Required")
+    extra_vehicles = models.ManyToManyField(Vehicle, blank=True,
+        verbose_name="Additional Vehicles Required")
     transported_by = models.CharField(max_length=64)
     transportation_comments = models.TextField()
 
@@ -54,6 +83,8 @@ class FieldTrip(models.Model):
     funds = models.CharField("Source of Funds", max_length=8, choices=SOURCE_OF_FUNDS_CHOICES)
 
     # Curricular Tie Ins
+    supervisor = models.OneToOneField(Approver, on_delete=models.CASCADE,
+        null=True, verbose_name="Approving Supervisor")
     standards = models.TextField("Unit(s) of Study / Curriculum Standards Addressed During Trip",
         help_text="Please be specific.")
     anticipatory = models.TextField("Description of Anticipatory Activity",
@@ -77,21 +108,11 @@ class Chaperone(models.Model):
     def __str__(self):
         return self.name
 
-class Approval(models.Model):
-    step = models.IntegerField()
-    ROLE_CHOICES = (
-        ('NURSE', 'Nurse'),
-        ('PRINCIPAL', 'Principal'),
-        ('SUPERVISOR', 'Supervisor'),
-        ('ASSISTANT SUPERINTENDANT', 'Assistant Superintendant'),
-        ('BUILDINGS/GROUNDS', 'Buildings and Grounds'),
-        ('TRANSPORATION', 'Transportation Secretary'),
-        ('PPS', 'Pupil Personnel Services'),
-        ('FIELD TRIP SECRETARY', 'Field Trip Secretary'),
-    )
-    role = models.CharField(max_length=32, choices=ROLE_CHOICES)
-    email = models.EmailField(null=True)
-    field_trip = models.ForeignKey(FieldTrip, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.email
+#class Approval(models.Model):
+#    step = models.IntegerField()
+#    role = models.CharField(max_length=32, choices=ROLE_CHOICES)
+#    email = models.EmailField(null=True)
+#    field_trip = models.ForeignKey(FieldTrip, on_delete=models.CASCADE)
+#
+#    def __str__(self):
+#        return self.email
