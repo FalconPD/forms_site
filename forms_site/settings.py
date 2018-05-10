@@ -39,6 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.microsoft',
 ]
 
 MIDDLEWARE = [
@@ -121,5 +126,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-from django.conf.global_settings import DATETIME_INPUT_FORMATS
-DATETIME_INPUT_FORMATS += ('%m/%d/%Y %I:%M %p',)
+AUTHENTICATION_BACKENDS = (
+        'django.contrib.auth.backends.ModelBackend',
+        'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+SITE_ID = 1
+
+SOCIALACCOUNT_ADAPTER = 'forms_site.adapters.OverrideSocialAccountAdapter'
