@@ -22,6 +22,7 @@ class FieldTripForm(forms.ModelForm):
 
 
 # This is the form someone sees when they create a new field trip request
+# It hides some fields and correctly populates the supervisor list
 class CreateForm(FieldTripForm):
 
     class Meta(FieldTripForm.Meta):

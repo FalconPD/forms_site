@@ -7,9 +7,11 @@ class ChaperoneInline(admin.TabularInline):
     extra = 2
 
 class FieldTripAdmin(admin.ModelAdmin):
+    readonly_fields = ('submitted',)
     fieldsets = [
         ('General Information',  {'fields': [
-            'email',
+            'submitted',
+            'submitter',
             'destination',
             'grades',
             'group',

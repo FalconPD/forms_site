@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Grade(models.Model):
     name = models.CharField(max_length=64)
@@ -21,9 +22,9 @@ class Role(models.Model):
         return self.name
 
 class Approver(models.Model):
+    email = models.EmailField()
     name = models.CharField(max_length=64)
     title = models.CharField(max_length=64)
-    email = models.EmailField()
     roles = models.ManyToManyField(Role)
 
     class Meta:
@@ -32,7 +33,7 @@ class Approver(models.Model):
     def __str__(self):
         buildings = ", ".join(map(str, self.building_set.all()))
         if len(buildings) > 0:
-            return '{}: {}, {}'.format(self.name, self.title, buildings)
+            return '{} {}, {}'.format(self.name, self.title, buildings)
         else:
             return '{}: {}'.format(self.name, self.title) 
 
@@ -49,12 +50,12 @@ class Building(models.Model):
 
 class FieldTrip(models.Model):
     # General Info
-    email = models.EmailField("Submitter")
-    submitted = models.DateTimeField("Submitted")
+    submitter = models.ForeignKey(User, on_delete=models.CASCADE)
+    submitted = models.DateTimeField("Submitted", auto_now_add=True)
     destination = models.CharField(max_length=64)
     group = models.CharField("Class / Group / Club", max_length=64)
     grades = models.ManyToManyField(Grade)
-    building = models.OneToOneField(Building, on_delete=models.CASCADE)
+    building = models.ForeignKey(Building, on_delete=models.CASCADE)
     roster = models.FileField()
     itinerary = models.TextField(help_text=
         ("Please include time at destination, lunch arrangements, and "
@@ -84,7 +85,7 @@ class FieldTrip(models.Model):
     funds = models.CharField("Source of Funds", max_length=8, choices=SOURCE_OF_FUNDS_CHOICES)
 
     # Curricular Tie Ins
-    supervisor = models.OneToOneField(Approver, on_delete=models.CASCADE,
+    supervisor = models.ForeignKey(Approver, on_delete=models.CASCADE,
         verbose_name="Approving Supervisor")
     standards = models.TextField("Unit(s) of Study / Curriculum Standards Addressed During Trip",
         help_text="Please be specific.")
