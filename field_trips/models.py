@@ -49,11 +49,12 @@ class Building(models.Model):
 
 class FieldTrip(models.Model):
     # General Info
-    email = models.EmailField("Submitter", null=True)
+    email = models.EmailField("Submitter")
+    submitted = models.DateTimeField("Submitted")
     destination = models.CharField(max_length=64)
     group = models.CharField("Class / Group / Club", max_length=64)
     grades = models.ManyToManyField(Grade)
-    building = models.OneToOneField(Building, on_delete=models.CASCADE, null=True)
+    building = models.OneToOneField(Building, on_delete=models.CASCADE)
     roster = models.FileField()
     itinerary = models.TextField(help_text=
         ("Please include time at destination, lunch arrangements, and "
@@ -84,7 +85,7 @@ class FieldTrip(models.Model):
 
     # Curricular Tie Ins
     supervisor = models.OneToOneField(Approver, on_delete=models.CASCADE,
-        null=True, verbose_name="Approving Supervisor")
+        verbose_name="Approving Supervisor")
     standards = models.TextField("Unit(s) of Study / Curriculum Standards Addressed During Trip",
         help_text="Please be specific.")
     anticipatory = models.TextField("Description of Anticipatory Activity",

@@ -1,0 +1,16 @@
+[
+   {
+      "model":"field_trips.vehicle",
+      "pk":1,
+      "fields":{
+         "name":"Equipment Trailer"
+      }
+   },
+   {
+      "model":"field_trips.vehicle",
+      "pk":2,
+      "fields":{
+         "name":"Food Truck"
+      }
+   }
+]

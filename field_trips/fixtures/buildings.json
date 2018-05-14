@@ -1,0 +1,101 @@
+[
+   {
+      "model":"field_trips.building",
+      "pk":1,
+      "fields":{
+         "name":"Oak Tree Elementary School",
+         "code":"OTS",
+         "approvers":[
+            2,
+            1
+         ]
+      }
+   },
+   {
+      "model":"field_trips.building",
+      "pk":2,
+      "fields":{
+         "name":"Applegarth Elementary School",
+         "code":"AES",
+         "approvers":[
+            4,
+            3
+         ]
+      }
+   },
+   {
+      "model":"field_trips.building",
+      "pk":3,
+      "fields":{
+         "name":"Barclay Brook Elementary School",
+         "code":"BBS",
+         "approvers":[
+            6,
+            7
+         ]
+      }
+   },
+   {
+      "model":"field_trips.building",
+      "pk":4,
+      "fields":{
+         "name":"Brookside Elementary School",
+         "code":"BES",
+         "approvers":[
+            8,
+            9
+         ]
+      }
+   },
+   {
+      "model":"field_trips.building",
+      "pk":5,
+      "fields":{
+         "name":"Mill Lake Elementary School",
+         "code":"MES",
+         "approvers":[
+            13,
+            12
+         ]
+      }
+   },
+   {
+      "model":"field_trips.building",
+      "pk":6,
+      "fields":{
+         "name":"Woodland Elementary School",
+         "code":"WES",
+         "approvers":[
+            10,
+            11
+         ]
+      }
+   },
+   {
+      "model":"field_trips.building",
+      "pk":7,
+      "fields":{
+         "name":"Monroe Township High School",
+         "code":"MTHS",
+         "approvers":[
+            17,
+            14,
+            16
+         ]
+      }
+   },
+   {
+      "model":"field_trips.building",
+      "pk":8,
+      "fields":{
+         "name":"Monroe Township Middle School",
+         "code":"AMS",
+         "approvers":[
+            18,
+            20,
+            19,
+            15
+         ]
+      }
+   }
+]

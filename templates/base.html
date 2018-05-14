@@ -1,0 +1,17 @@
+<html lang="en">
+<head>
+    {% include "cdn_base.html" %}
+    {% block head %}
+    {% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        {% include "navbar.html" %}
+    </nav>
+
+    <div class="container-fluid" id="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,66 @@
+[
+   {
+      "model":"field_trips.role",
+      "pk":1,
+      "fields":{
+         "code":"PRINCIPAL",
+         "name":"Principal"
+      }
+   },
+   {
+      "model":"field_trips.role",
+      "pk":2,
+      "fields":{
+         "code":"NURSE",
+         "name":"Nurse"
+      }
+   },
+   {
+      "model":"field_trips.role",
+      "pk":3,
+      "fields":{
+         "code":"SUPERVISOR",
+         "name":"Supervisor"
+      }
+   },
+   {
+      "model":"field_trips.role",
+      "pk":4,
+      "fields":{
+         "code":"ASSISTANT SUPERINTENDENT",
+         "name":"Assistant Superintendent"
+      }
+   },
+   {
+      "model":"field_trips.role",
+      "pk":5,
+      "fields":{
+         "code":"FIELD TRIP SECRETARY",
+         "name":"Field Trip Secretary"
+      }
+   },
+   {
+      "model":"field_trips.role",
+      "pk":6,
+      "fields":{
+         "code":"PPS",
+         "name":"Secretary of Pupil Personnel Services"
+      }
+   },
+   {
+      "model":"field_trips.role",
+      "pk":7,
+      "fields":{
+         "code":"FACILITIES",
+         "name":"Head of Facilities"
+      }
+   },
+   {
+      "model":"field_trips.role",
+      "pk":8,
+      "fields":{
+         "code":"TRANSPORTATION",
+         "name":"Secretary of Transportation"
+      }
+   }
+]

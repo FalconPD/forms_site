@@ -1,29 +1,33 @@
-{% load widget_tweaks %}
+{% if field %}
 
-<div class="form-group">
+    {% load widget_tweaks %}
 
-    {{ field.label_tag }}
+    <div class="form-group">
 
-    {% if field|widget_type == "dateinput" %}
-        {{ field|add_class:"form-control datetimepicker"|add_error_class:"is-invalid" }}
-    {% else %}
-        {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
-    {% endif %}
+        {{ field.label_tag }}
 
-    {% if field|widget_type == "selectmultiple" %}
-        <small class="form-text text-muted">
-            Hold down "Control", or "Command" on a Mac, to select more than one.
-        </small>
-    {% endif %}
+        {% if field|widget_type == "dateinput" %}
+            {{ field|add_class:"form-control datetimepicker"|add_error_class:"is-invalid" }}
+        {% else %}
+            {{ field|add_class:"form-control"|add_error_class:"is-invalid" }}
+        {% endif %}
 
-    {% if field.help_text %}
-        <small class="form-text text-muted">{{ field.help_text }}</small>
-    {% endif %}
+        {% if field|widget_type == "selectmultiple" %}
+            <small class="form-text text-muted">
+                Hold down "Control", or "Command" on a Mac, to select more than one.
+            </small>
+        {% endif %}
 
-    {% if field.errors %}
-        {% for error in field.errors %}
-            <div class="invalid-feedback">{{ error }}</div>
-        {% endfor %}
-    {% endif %}
+        {% if field.help_text %}
+            <small class="form-text text-muted">{{ field.help_text }}</small>
+        {% endif %}
 
-</div>
+        {% if field.errors %}
+            {% for error in field.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+        {% endif %}
+
+    </div>
+
+{% endif %}

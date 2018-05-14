@@ -1,0 +1,114 @@
+[
+   {
+      "model":"field_trips.grade",
+      "pk":1,
+      "fields":{
+         "name":"Pre-K",
+         "code":"PK"
+      }
+   },
+   {
+      "model":"field_trips.grade",
+      "pk":2,
+      "fields":{
+         "name":"Kindergarten",
+         "code":"K"
+      }
+   },
+   {
+      "model":"field_trips.grade",
+      "pk":3,
+      "fields":{
+         "name":"Grade 1",
+         "code":"01"
+      }
+   },
+   {
+      "model":"field_trips.grade",
+      "pk":4,
+      "fields":{
+         "name":"Grade 2",
+         "code":"02"
+      }
+   },
+   {
+      "model":"field_trips.grade",
+      "pk":5,
+      "fields":{
+         "name":"Grade 3",
+         "code":"03"
+      }
+   },
+   {
+      "model":"field_trips.grade",
+      "pk":6,
+      "fields":{
+         "name":"Grade 4",
+         "code":"04"
+      }
+   },
+   {
+      "model":"field_trips.grade",
+      "pk":7,
+      "fields":{
+         "name":"Grade 5",
+         "code":"05"
+      }
+   },
+   {
+      "model":"field_trips.grade",
+      "pk":8,
+      "fields":{
+         "name":"Grade 6",
+         "code":"06"
+      }
+   },
+   {
+      "model":"field_trips.grade",
+      "pk":9,
+      "fields":{
+         "name":"Grade 7",
+         "code":"07"
+      }
+   },
+   {
+      "model":"field_trips.grade",
+      "pk":10,
+      "fields":{
+         "name":"Grade 8",
+         "code":"08"
+      }
+   },
+   {
+      "model":"field_trips.grade",
+      "pk":11,
+      "fields":{
+         "name":"Grade 9",
+         "code":"09"
+      }
+   },
+   {
+      "model":"field_trips.grade",
+      "pk":12,
+      "fields":{
+         "name":"Grade 10",
+         "code":"10"
+      }
+   },
+   {
+      "model":"field_trips.grade",
+      "pk":13,
+      "fields":{
+         "name":"Grade 11",
+         "code":"11"
+      }
+   },
+   {
+      "model":"field_trips.grade",
+      "pk":14,
+      "fields":{
+         "name":"Grade 12",
+         "code":"12"
+      }
+   }
+]
