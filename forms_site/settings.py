@@ -136,3 +136,6 @@ SITE_ID = 1
 SOCIALACCOUNT_ADAPTER = 'forms_site.adapters.OverrideSocialAccountAdapter'
 
 LOGIN_URL = 'http://localhost:8000/accounts/microsoft/login'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'

@@ -3,10 +3,10 @@
 {% load static %}
 
 {% block head %}
-    <link rel="stylesheet" type="text/css" href="{% static "field_trips/create.css" %}"></link>
+    <link rel="stylesheet" type="text/css" href="{% static "field_trips/cards.css" %}"></link>
     <!-- this lets us dynamically add chaperones -->
     <script src="{% static "field_trips/jquery.formset.js" %}"></script>
-    <script src="{% static "field_trips/field_trips.js" %}"></script>
+    <script src="{% static "field_trips/create.js" %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -34,7 +34,7 @@
     <div class="card">
         <div class="card-header">General Information</div>
         <div class="card-body">
-            {% include "field_trips/general.html" %}
+            {% include "field_trips/create/general.html" %}
         </div>
     </div>
 
@@ -42,7 +42,7 @@
     <div class="card">
         <div class="card-header">Transportation</div>
         <div class="card-body">
-            {% include "field_trips/transportation.html" %}      
+            {% include "field_trips/create/transportation.html" %}      
         </div>
     </div>
 
@@ -50,7 +50,7 @@
     <div class="card">
         <div class="card-header">Funding</div>
         <div class="card-body">
-            {% include "field_trips/funding.html" %}
+            {% include "field_trips/create/funding.html" %}
         </div>
     </div>
 
@@ -58,7 +58,7 @@
     <div class="card">
         <div class="card-header">Curricular Tie Ins</div>
         <div class="card-body">
-            {% include "field_trips/curriculum.html" %}
+            {% include "field_trips/create/curriculum.html" %}
         </div>
     </div>
 

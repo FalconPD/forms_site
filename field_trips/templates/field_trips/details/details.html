@@ -7,7 +7,7 @@
 <link
     rel="stylesheet"
     type="text/css"
-    href="{% static 'field_trips/details.css' %}">
+    href="{% static 'field_trips/cards.css' %}">
 </link>
 
 {% endblock %}
@@ -16,10 +16,59 @@
 
 <div class="row">
     <div class="col-sm">
-        <h2 class="text-center mt-3">Field Trip Request Details</h2>
+        <h2 class="text-center mt-3">
+            Field Trip Request #{{ field_trip.id }}
+        </h2>
     </div>
 </div>
 
-{% include "field_trips/details/general.html" %}
+<!-- General Info -->
+<div class="card">
+    <div class="card-header">General Information</div>
+    <div class="card-body">
+        {% include "field_trips/details/general.html" %}
+    </div>
+</div>
+
+<!-- Transportation -->
+<div class="card">
+    <div class="card-header">Transportation</div>
+    <div class="card-body">
+        {% include "field_trips/details/transportation.html" %}
+    </div>
+</div>
+
+<!-- Funding -->
+<div class="card">
+    <div class="card-header">Funding</div>
+    <div class="card-body">
+        {% include "field_trips/details/funding.html" %}
+    </div>
+</div>
+
+<!-- Curriculum -->
+<div class="card">
+    <div class="card-header">Curriculum</div>
+    <div class="card-body">
+        {% include "field_trips/details/curriculum.html" %}
+    </div>
+</div>
+
+
+<!-- Nurse -->
+<div class="card">
+    <div class="card-header">Nurse</div>
+    <div class="card-body">
+        {% include "field_trips/details/nurse.html" %}
+    </div>
+</div>
+
+<!-- Approvals -->
+<div class="card">
+    <div class="card-header">Nurse</div>
+    <div class="card-body">
+        {% include "field_trips/details/approvals.html" %}
+    </div>
+</div>
 
 {% endblock %}

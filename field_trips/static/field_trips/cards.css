@@ -6,3 +6,7 @@ th{
     margin-top: 1.5em;
     margin-bottom: 1.5em;
 }
+
+span.label {
+    font-weight: bold;
+}

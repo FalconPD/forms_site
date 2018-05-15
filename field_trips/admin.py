@@ -1,6 +1,10 @@
 from django.contrib import admin
 
-from .models import Chaperone, FieldTrip, Vehicle, Grade, Role, Approver, Building
+from .models import Chaperone, FieldTrip, Vehicle, Grade, Role, Approver, Building, Approval
+
+class ApprovalInline(admin.StackedInline):
+    model = Approval
+    extra = 6
 
 class ChaperoneInline(admin.TabularInline):
     model = Chaperone
@@ -12,6 +16,7 @@ class FieldTripAdmin(admin.ModelAdmin):
         ('General Information',  {'fields': [
             'submitted',
             'submitter',
+            'building',
             'destination',
             'grades',
             'group',
@@ -44,7 +49,7 @@ class FieldTripAdmin(admin.ModelAdmin):
             'nurse_name',
         ]})
     ]
-    inlines = [ChaperoneInline]
+    inlines = [ChaperoneInline, ApprovalInline]
 
 admin.site.register(FieldTrip, FieldTripAdmin)
 admin.site.register(Vehicle)
@@ -53,3 +58,4 @@ admin.site.register(Role)
 admin.site.register(Approver)
 admin.site.register(Building)
 admin.site.register(Chaperone)
+admin.site.register(Approval)

@@ -1,0 +1,28 @@
+<div class="row">
+    <div class="col-md">
+        <span class="label">Directions:</span>
+        <a href="{{ field_trip.directions.url }}">
+            {{ field_trip.directions }}
+        </a>
+    </div>
+    <div class="col-md">
+        <span class="label">Number of Buses Required:</span>
+        {{ field_trip.buses }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md">
+        <span class="label">Additional Vehicles Required:</span>
+        {{ field_trip.extra_vehicles.all|join:"," }}
+    </div>
+    <div class="col-md">
+        <span class="label">Transported By:</span>
+        {{ field_trip.transported_by }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md">
+        <span class="label">Comments:</span>
+        {{ field_trip.transportation_comments }}
+    </div>
+</div>

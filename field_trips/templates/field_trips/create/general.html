@@ -1,0 +1,55 @@
+<div class="row">
+    <div class="col-md">
+        {% include "field_trips/create/form_group.html" with field=form.destination %}
+    </div>
+    <div class="col-md">
+        {% include "field_trips/create/form_group.html" with field=form.group %}
+    </div>
+    <div class="col-sm">
+        {% include "field_trips/create/form_group.html" with field=form.pupils %}
+    </div>
+    <div class="col-sm">
+        {% include "field_trips/create/form_group.html" with field=form.teachers %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm">
+        {% include "field_trips/create/form_group.html" with field=form.building %}
+    </div>
+    <div class="col-sm">
+        {% include "field_trips/create/form_group.html" with field=form.departing %}
+        <a href="#" target="_blank">
+            <small class="form-text text-muted">
+                Click here to check the calendar for conflicting trips
+            </small>
+        </a>
+    </div>
+    <div class="col-sm">
+        {% include "field_trips/create/form_group.html" with field=form.returning %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm">
+        {% include "field_trips/create/form_group.html" with field=form.grades %}
+    </div>
+    <div class="col-md">
+        {% include "field_trips/create/form_group.html" with field=form.roster %}
+        <a href="http://youtube.com" target="_blank">
+            <small class="form-text text-muted">
+                Click here to learn how to create rosters in Genesis.
+            </small>
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    {% include "field_trips/create/chaperones.html" %}
+</div>
+
+<div class="row">
+    <div class="col-sm">
+        {% include "field_trips/create/form_group.html" with field=form.itinerary %}
+    </div>
+</div>

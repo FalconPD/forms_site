@@ -25,7 +25,7 @@ def create(request):
     else:
         formset = ChaperoneFormFactory()
         form = CreateForm()
-    return render(request, 'field_trips/create.html', {'form': form, 'formset': formset})
+    return render(request, 'field_trips/create/create.html', {'form': form, 'formset': formset})
 
 @login_required
 def detail(request, pk):

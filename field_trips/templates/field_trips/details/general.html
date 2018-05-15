@@ -1,7 +1,4 @@
 <div class="row">
-    <div class="col-sm"><h4>General Information</h4></div>
-</div>
-<div class="row">
     <div class="col-md">
         <span class="label">Submitter:</span>
         <a href="mailto:{{ field_trip.submitter.email }}">
@@ -51,7 +48,7 @@
     </div>
     <div class="col-md">
         <span class="label">Roster:</span>
-        {{ field_trip.roster.url }}
+        <a href="{{ field_trip.roster.url }}">{{ field_trip.roster }}</a>
     </div>
 </div>
 <div class="row">
