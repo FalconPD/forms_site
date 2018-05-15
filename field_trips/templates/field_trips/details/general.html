@@ -1,61 +1,89 @@
-<table class="table">
-    <thead><tr><th scope="col">General Information</th></tr></thead>
-    <tbody>
-        <tr>
-            <td>Submitter</td>
-            <td>{{ field_trip.email }}</td>
-        </tr>
-        <tr>
-            <td>Submitted</td>
-            <td>{{ field_trip.submitted }}</td>
-        </tr>
-        <tr>
-            <td>Destination</td>
-            <td>{{ field_trip.destination }}</td>
-        </tr>
-        <tr>
-            <td>Class / Group / Club</td>
-            <td>{{ field_trip.group }}</td>
-        </tr>
-        <tr>
-            <td>Date and Time of Departure</td>
-            <td>{{ field_trip.departing }}</td>
-        </tr>
-        <tr>
-            <td>Date and Time Returning to School</td>
-            <td>{{ field_trip.returning }}</td>
-        </tr>
-        <tr>
-            <td>Grades</td>
-            <td>{{ field_trip.grades }}</td>
-        </tr>
-        <tr>
-            <td>Building</td>
-            <td>{{ field_trip.building }}</td>
-        </tr>
-        <tr>
-            <td>Roster</td>
-            <td>{{ field_trip.roster }}</td>
-        </tr>
-        <tr>
-            <td>Itinerary</td>
-            <td>{{ field_trip.itinerary }}</td>
-        </tr>
-        <tr>
-            <td>Number of Pupils</td>
-            <td>{{ field_trip.pupils }}</td>
-        </tr>
-        <tr>
-            <td>Number of Teachers</td>
-            <td>{{ field_trip.teachers }}</td>
-        </tr>
-        <tr>
-            <td>Chaperones</td>
-            <td>Placeholder</td>
-        </tr>
-        <tr>
-            <td>Total</td>
-            <td>Placeholder</td>
-        </tr>
-    </tbody>
-</table>
+<div class="row">
+    <div class="col-sm"><h4>General Information</h4></div>
+</div>
+<div class="row">
+    <div class="col-md">
+        <span class="label">Submitter:</span>
+        <a href="mailto:{{ field_trip.submitter.email }}">
+            {{ field_trip.submitter.first_name }}
+            {{ field_trip.submitter.last_name }}
+        </a>
+    </div>
+    <div class="col-md">
+        <span class="label">Submitted:</span>
+        {{ field_trip.submitted }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md">
+        <span class="label">Destination:</span>
+        {{ field_trip.destination }}
+    </div>
+    <div class="col-md">
+        <span class="label">Class / Group / Club:</span>
+        {{ field_trip.group }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md">
+        <span class="label">Date and Time of Departure:</span>
+        {{ field_trip.departing }}
+    </div>
+    <div class="col-md">
+        <span class="label">Date and Time Returning to School:</span>
+        {{ field_trip.returning }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md">
+        <span class="label">Grades:</span>
+        {{ field_trip.grades }}
+    </div>
+    <div class="col-md">
+        <span class="label">Building:</span>
+        {{ field_trip.building }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md">
+        <span class="label">Itinerary:</span>
+        {{ field_trip.itinerary }}
+    </div>
+    <div class="col-md">
+        <span class="label">Roster:</span>
+        {{ field_trip.roster.url }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md">
+        <span class="label">Number of Pupils:</span>
+        {{ field_trip.pupils }}
+    </div>
+    <div class="col-md">
+        <span class="label">Number of Teachers:</span>
+        {{ field_trip.teachers }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm">
+        <span class="label">Chaperones:</span>
+    </div>
+</div>
+{% for chaperone in field_trip.chaperone_set.all %}
+<div class="row">
+    <div class="col-md">
+        <span class="label">Name:</span>
+        {{ chaperone.name }}
+    </div>
+    <div class="col-md">
+        <span class="label">Phone Number:</span>
+        {{ chaperone.phone }}
+    </div>
+</div>
+{% endfor %}
+<div class="row">
+    <div class="col-md">
+        <span class="label">Total Attendees:</span>
+        {{ field_trip.total }}
+    </div>
+</div>

@@ -102,6 +102,9 @@ class FieldTrip(models.Model):
     def __str__(self):
         return self.destination
 
+    def total(self):
+        return self.chaperone_set.count() + self.pupils + self.teachers
+
 class Chaperone(models.Model):
     name = models.CharField(max_length=64)
     phone_number = models.CharField(max_length=16)

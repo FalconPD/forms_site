@@ -30,5 +30,5 @@ def create(request):
 @login_required
 def detail(request, pk):
     field_trip = get_object_or_404(FieldTrip, pk=pk)
-    return render(request,'field_trips/details.html', {'field_trip': field_trip,
-        'fields': ('destination', 'departing')})
+    return render(request,'field_trips/details/details.html',
+        {'field_trip': field_trip})
