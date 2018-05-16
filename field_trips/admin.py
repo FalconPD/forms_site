@@ -3,6 +3,7 @@ from django.contrib import admin
 from .models import Chaperone, FieldTrip, Vehicle, Grade, Role, Approver, Building, Approval
 
 class ApprovalInline(admin.StackedInline):
+    readonly_fields = ('timestamp',)
     model = Approval
     extra = 6
 
@@ -14,6 +15,7 @@ class FieldTripAdmin(admin.ModelAdmin):
     readonly_fields = ('submitted',)
     fieldsets = [
         ('General Information',  {'fields': [
+            'status',
             'submitted',
             'submitter',
             'building',

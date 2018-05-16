@@ -3,6 +3,7 @@
     "model": "field_trips.fieldtrip",
 		"pk": 1,
 		"fields": {
+            "status": "In Progress",
 			"submitter": 1,
 			"submitted": "2018-05-15T23:29:43.004Z",
 			"destination": "Test Trip Just Submitted",

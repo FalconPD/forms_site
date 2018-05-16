@@ -1,5 +1,15 @@
 <div class="row">
     <div class="col-md">
+        <span class="label">Status:</span>
+        {{ field_trip.status }}
+    </div>
+    <div class="col-md">
+        <span class="label">Total Attendees:</span>
+        {{ field_trip.total }}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md">
         <span class="label">Submitter:</span>
         <a href="mailto:{{ field_trip.submitter.email }}">
             {{ field_trip.submitter.first_name }}
@@ -34,7 +44,7 @@
 <div class="row">
     <div class="col-md">
         <span class="label">Grades:</span>
-        {{ field_trip.grades }}
+        {{ field_trip.grades.all|join:"," }}
     </div>
     <div class="col-md">
         <span class="label">Building:</span>
@@ -74,13 +84,7 @@
     </div>
     <div class="col-md">
         <span class="label">Phone Number:</span>
-        {{ chaperone.phone }}
+        {{ chaperone.phone_number }}
     </div>
 </div>
 {% endfor %}
-<div class="row">
-    <div class="col-md">
-        <span class="label">Total Attendees:</span>
-        {{ field_trip.total }}
-    </div>
-</div>

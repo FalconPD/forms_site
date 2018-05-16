@@ -20,10 +20,11 @@ class FieldTripForm(forms.ModelForm):
         model = FieldTrip
         fields = [] # default to nothing showing
 
-
-# This is the form someone sees when they create a new field trip request
-# It hides some fields and correctly populates the supervisor list
 class CreateForm(FieldTripForm):
+    """
+    This is the form someone sees when they create a new field trip request.
+    It hides some fields and correctly populates the supervisor list
+    """
 
     class Meta(FieldTripForm.Meta):
         fields = ['destination', 'group', 'grades', 'roster', 'itinerary',

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md">
+        <h2 class="text-center mt-3">My Field Trips</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">
+                        <a href="?order_by=id">ID</a>
+                    </th>
+                    <th scope="col">
+                        <a href="?order_by=destination">Destination</a>
+                    </th>
+                    <th scope="col">
+                        <a href="?order_by=group">Group</a>
+                    </th>
+                    <th scope="col">
+                        <a href="?order_by=departing">Departure Date</a>
+                    </th>
+                    <th scope="col">
+                        <a href="?order_by=status">Status</a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for field_trip in field_trips %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'field_trips:detail' field_trip.id %}">
+                                {{ field_trip.id }}
+                            </a>
+                        </td>
+                        <td>{{ field_trip.destination }}</td>
+                        <td>{{ field_trip.group }}</td>
+                        <td>{{ field_trip.departing }}</td>
+                        <td>{{ field_trip.status }}</td>
+                    </tr>
+                    </a>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

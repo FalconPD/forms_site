@@ -1,12 +1,12 @@
-th{
-    font-weight: normal;
+th {
+    font-weight: 600;
 }
 
-.card{
+.card {
     margin-top: 1.5em;
     margin-bottom: 1.5em;
 }
 
-span.label {
-    font-weight: bold;
+span.label, label, .card-header {
+    font-weight: 600;
 }

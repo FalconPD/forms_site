@@ -1,2 +1,28 @@
-<div class="row">
-</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Response</th>
+            <th scope="col">Comments</th>
+            <th scope="col">Role</th>
+            <th scope="col">Name</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for approval in field_trip.approval_set.all %}
+        <tr>
+            <th scope="row">
+            {% if approval.approved == None %}
+                Awaiting Response
+            {% elif approval.approved %}
+                Approved
+            {% else %}
+                Denied
+            {% endif %}
+            </th>
+            <td>{{ approval.comments }}</td>
+            <td>{{ approval.role }}</td>
+            <td>{{ approval.approver.name }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

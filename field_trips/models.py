@@ -51,6 +51,7 @@ class Building(models.Model):
 
 class FieldTrip(models.Model):
     # General Info
+    status = models.CharField(max_length=64, default="In Progress")
     submitter = models.ForeignKey(User, on_delete=models.CASCADE)
     submitted = models.DateTimeField("Submitted", auto_now_add=True)
     destination = models.CharField(max_length=64)
@@ -134,23 +135,55 @@ class FieldTrip(models.Model):
         approvals, notifies approvers, and contains the primary logic for how
         a form is processed
         """
+        # Only check approvals for forms that haven't yet been approved or
+        # denied
+        if self.status != "In Progress":
+            return
 
-        # nurses
-        result = self.check_or_add_approval("NURSE", self.building)
-        if result != "Approved":
-            return result
-        
-        # principals
-        result = self.check_or_add_approval("PRINCIPAL", self.building)
-        if result != "Approved":
-            return result
+        # The first four approvals have no conditions
+        approvals = (
+            ("NURSE", self.building),
+            ("PRINCIPAL", self.building),
+            ("SUPERVISOR", None),
+            ("ASSISTANT SUPERINTENDENT", None)
+        )
 
-        # supervisor
-        result = self.check_or_add_approval("SUPERVISOR")
-        if result != "Approved":
-            return result
+        for approval in approvals:
+            result = self.check_or_add_approval(*approval)
+            if result != "Approved":
+                self.status = result
+                return
 
-        return result
+        # if we need extra vehicles add an approval for facilities
+        if len(self.vehicle_set) > 0:
+            result = self.check_or_add_approval("FACILITES", None)
+            if result != "Approved":
+                self.status = result
+                return
+
+        # always add transportation
+        result = self.check_or_add_approval("TRANSPORTATION", None)
+        if result != "Approved":
+            self.status = result
+            return
+
+        # if a nurse is requred add an approval for PPS
+        if self.nurse_required:
+            result = self.check_or_add_approval("PPS", None)
+            if result != "Approved":
+                self.status = result
+                return
+
+        # the field trip secretary will approve it once it is approved by the
+        # board
+        result = self.check_or_add_approval("FIELDTRIP SECRETARY", None)
+        if result != "Approved":
+            self.status = result
+            return
+
+        self.status = "Approved"
+        return
+
 
 class Chaperone(models.Model):
     name = models.CharField(max_length=64)
@@ -164,12 +197,17 @@ class Chaperone(models.Model):
 # be for ONE role and ONE building
 class Approval(models.Model):
 
-    approver = models.ForeignKey(Approver, on_delete=models.CASCADE, null=True)
+    class Meta:
+        ordering = ['timestamp']
+
+    approver = models.ForeignKey(Approver, on_delete=models.CASCADE,
+        blank=True, null=True)
     approved = models.NullBooleanField()
     comments = models.TextField(blank=True)
     field_trip = models.ForeignKey(FieldTrip, on_delete=models.CASCADE)
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(blank=True, null=True)
+    timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "{} {} {}".format(self.role, self.approver, self.approved)
+        return "Approved: {} Role: {} Approver: {}".format(self.approved,
+            self.role, self.approver)

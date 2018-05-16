@@ -1,0 +1,24 @@
+{% load field_trips %}
+
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Field Trips
+    </a>
+    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+        <a class="dropdown-item" href="{% url 'field_trips:create' %}">
+            Create
+        </a>
+        <a class="dropdown-item" href="{% url 'field_trips:index' %}">
+            View
+        </a>
+        <a class="dropdown-item" href="{% url 'field_trips:calendar' %}">
+            Calendar
+        </a>
+        {% if request.user|is_approver %}
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="{% url 'field_trips:approve' %}">
+            Approve
+        </a>
+        {% endif %}
+    </div>
+</li>
