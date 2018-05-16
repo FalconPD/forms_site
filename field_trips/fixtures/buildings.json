@@ -78,9 +78,10 @@
          "name":"Monroe Township High School",
          "code":"MTHS",
          "approvers":[
-            17,
-            14,
-            16
+            18,
+            20,
+            19,
+            15
          ]
       }
    },
@@ -91,10 +92,9 @@
          "name":"Monroe Township Middle School",
          "code":"AMS",
          "approvers":[
-            18,
-            20,
-            19,
-            15
+            17,
+            14,
+            16
          ]
       }
    }

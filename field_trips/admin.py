@@ -39,6 +39,7 @@ class FieldTripAdmin(admin.ModelAdmin):
             'funds',
         ]}),
         ('Curricular Tie Ins', {'fields': [
+            'supervisor',
             'standards',
             'anticipatory',
             'purpose',

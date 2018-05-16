@@ -106,55 +106,51 @@ class FieldTrip(models.Model):
     def total(self):
         return self.chaperone_set.count() + self.pupils + self.teachers
 
-    def clean_approvals(self):
-        """
-        If a role has multiple approvers, we only need 1 response from
-        that group. This removes unneeded approvals after someone responds
-        """
-        print("Removing unneeded approvals")
-        for role in Role.objects.all():
-            queryset = self.approval_set.filter(role=role)
-            if queryset.filter(Q(approved=True) | Q(approved=False)).exists():
-                for approval in queryset.filter(approved=None):
-                    print("Removing unneeded approval {}".format(approval))
-                    approval.delete()
-                    
-    def create_approvals(self, role):
-        """
-        Creates and saves approvals for a particular role
-        """
-        print("Creating approvals for {} {}".format(role, self.building))
+    def add_approval(self, role, building=None):
+        print("Creating new approval for {} {}".format(role, building))
+        Approval(field_trip=self, role=role).save()
+        approvers = Approver.objects.filter(roles=role)
+        if building:
+            approvers = approvers.filter(building=building)
+        for approver in approvers:
+            print("Emailing notification to {}".format(approver))
 
-        for approver in Approver.objects.filter(roles=role,
-        building=field_trip.building):
-            print("Creating approval for {}".format(approver))
-            approval = Approval(approver=approver, field_trip=self, role=role,
-                building=self.building)
-            approval.save()
-            print("Send email here")
+    def check_or_add_approval(self, code, building=None):
+        role = Role.objects.filter(code=code)[0]
+        print("Checking approval for {} {}".format(role, building))
+        if not self.approval_set.filter(role=role).exists():
+            self.add_approval(role, self.building)
+            return "In Progress"
+        elif self.approval_set.filter(role=role, approved=None).exists():
+            return "In Progress"
+        elif self.approval_set.filter(role=role, approved=False).exists():
+            return "Denied"
+        elif self.approval_set.filter(role=role, approved=True).exists():
+            return "Approved"
 
     def process_approvals(self):
         """
-        Creates and checks approvals as needed to see what the status of the
-        form is. Should be run after every form change
+        This should be called every time the form is changed. It sets up
+        approvals, notifies approvers, and contains the primary logic for how
+        a form is processed
         """
 
-        # remove any unneeded approvals
-        self.clean_approvals()
+        # nurses
+        result = self.check_or_add_approval("NURSE", self.building)
+        if result != "Approved":
+            return result
+        
+        # principals
+        result = self.check_or_add_approval("PRINCIPAL", self.building)
+        if result != "Approved":
+            return result
 
-        # Nurses
-        role = Role.objects.filter(code='NURSE')
-        queryset = self.approval_set.filter(role=role)
-        if not queryset.exists(): # no approvals, create them
-            self.create_approvals(role)
-            return "In Progress"
-        elif queryset.filter(approved=None).exists(): # not completed yet
-            return "In Progress"
-        elif queryset.filter(approved=False).exists(): # denied
-            return "Denied"
+        # supervisor
+        result = self.check_or_add_approval("SUPERVISOR")
+        if result != "Approved":
+            return result
 
-        # otherwise it has been approved
-        return "Approved"
+        return result
 
 class Chaperone(models.Model):
     name = models.CharField(max_length=64)
@@ -168,10 +164,12 @@ class Chaperone(models.Model):
 # be for ONE role and ONE building
 class Approval(models.Model):
 
-    approver = models.ForeignKey(Approver, on_delete=models.CASCADE)
+    approver = models.ForeignKey(Approver, on_delete=models.CASCADE, null=True)
     approved = models.NullBooleanField()
     comments = models.TextField(blank=True)
     field_trip = models.ForeignKey(FieldTrip, on_delete=models.CASCADE)
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
-    building = models.ForeignKey(Building, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self):
+        return "{} {} {}".format(self.role, self.approver, self.approved)
