@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block head %}
+
+<link
+    rel="stylesheet"
+    type="text/css"
+    href="{% static 'field_trips/cards.css' %}">
+</link>
+<script src="{% static "field_trips/jquery.formset.js" %}"></script>
+<script src="{% static "field_trips/create.js" %}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+{% if form %}
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">
+      {% for error in form.non_field_errors %}
+        {{ error }}
+      {% endfor %}
+    </div>
+    {% endif %}
+    <form enctype="{{ enctype }}" action="{{ action }}" method="post">
+    {% csrf_token %}
+{% endif %}
+
+<div class="row">
+    <div class="col-sm">
+        <h2 class="text-center mt-3">
+            {{ title }}
+        </h2>
+    </div>
+</div>
+
+{% for card_title, card_body in cards %}
+    {% include "field_trips/card.html" with title=card_title card_body=card_body %}
+{% endfor %}
+
+{% if form %}
+    <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+{% endif %}
+
+{% endblock %}

@@ -4,6 +4,7 @@
             <th scope="col">Response</th>
             <th scope="col">Comments</th>
             <th scope="col">Role</th>
+            <th scope="col">Building</th>
             <th scope="col">Name</th>
         </tr>
     </thead>
@@ -21,7 +22,12 @@
             </th>
             <td>{{ approval.comments }}</td>
             <td>{{ approval.role }}</td>
-            <td>{{ approval.approver.name }}</td>
+            <td>{{ approval.building }}</td>
+            <td>
+                <a href="mailto:{{ approval.approver.email }}">
+                    {{ approval.approver.name }}
+                </a>
+            </td>
         </tr>
     {% endfor %}
     </tbody>

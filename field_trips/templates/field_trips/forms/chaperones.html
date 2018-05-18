@@ -12,8 +12,8 @@
     <tbody>
         {% for form in formset %}
             <tr class="chaperones">
-                {% include "field_trips/create/table_data.html" with field=form.name %}
-                {% include "field_trips/create/table_data.html" with field=form.phone_number %}
+                {% include "field_trips/forms/table_data.html" with field=form.name %}
+                {% include "field_trips/forms/table_data.html" with field=form.phone_number %}
             </tr>
         {% endfor %}
     </tbody>

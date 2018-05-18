@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md">
+        <h2 class="text-center mt-3">Field Trips You Can Approve</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg">{% include "field_trips/list.html" with next_view="field_trips:approve" %}</div>
+</div>
+
+{% endblock %}

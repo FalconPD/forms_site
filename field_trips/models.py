@@ -109,7 +109,7 @@ class FieldTrip(models.Model):
 
     def add_approval(self, role, building=None):
         print("Creating new approval for {} {}".format(role, building))
-        Approval(field_trip=self, role=role).save()
+        Approval(field_trip=self, role=role, building=building).save()
         approvers = Approver.objects.filter(roles=role)
         if building:
             approvers = approvers.filter(building=building)
@@ -184,6 +184,22 @@ class FieldTrip(models.Model):
         self.status = "Approved"
         return
 
+    def first_needed_approval_for_approver(self, approver):
+        """
+        Returns the first approval needed for a particular approver. If there
+        is no approval needed for that approver it returns None.
+        """
+        if not self.status == "In Progress":
+            return None
+
+        for approval in self.approval_set.filter(approved=None):
+            if approval.role in approver.roles.all():
+                if approval.building:
+                    if approval.building in approver.building_set.all():
+                        return approval
+                else:
+                    return approval
+        return None
 
 class Chaperone(models.Model):
     name = models.CharField(max_length=64)
@@ -206,8 +222,10 @@ class Approval(models.Model):
     comments = models.TextField(blank=True)
     field_trip = models.ForeignKey(FieldTrip, on_delete=models.CASCADE)
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
+    building = models.ForeignKey(Building, on_delete=models.CASCADE,
+        blank=True, null=True)
     timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "Approved: {} Role: {} Approver: {}".format(self.approved,
-            self.role, self.approver)
+        return "Role: {}, Building: {}, Approver: {}, Approved: {}".format(
+            self.role, self.building, self.approver, self.approved)

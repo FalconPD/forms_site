@@ -1,12 +1,12 @@
 <div class="row">
     <div class="col-sm">
-        {% include "field_trips/create/form_group.html" with field=form.buses %}
+        {% include "field_trips/forms/form_group.html" with field=form.buses %}
     </div>
     <div class="col-sm">
-        {% include "field_trips/create/form_group.html" with field=form.extra_vehicles %}
+        {% include "field_trips/forms/form_group.html" with field=form.extra_vehicles %}
     </div>
     <div class="col-lg">
-        {% include "field_trips/create/form_group.html" with field=form.directions %}
+        {% include "field_trips/forms/form_group.html" with field=form.directions %}
         <a href="http://youtube.com" target="_blank">
             <small class="form-text text-muted">
                 Click here to learn how to create a PDF of your directions.
@@ -17,12 +17,12 @@
 
 <div class="row">
     <div class="col-lg">
-        {% include "field_trips/create/form_group.html" with field=form.transported_by %}
+        {% include "field_trips/forms/form_group.html" with field=form.transported_by %}
     </div>
 </div>
 
 <div class="row">
     <div class="col-lg">
-        {% include "field_trips/create/form_group.html" with field=form.transportation_comments %}
+        {% include "field_trips/forms/form_group.html" with field=form.transportation_comments %}
     </div>
 </div>

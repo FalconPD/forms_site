@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import FieldTrip, Chaperone, Approver
+from .models import FieldTrip, Chaperone, Approver, Approval
 
 DATETIME_FORMAT = "%m/%d/%Y %I:%M %p"
 
@@ -35,6 +35,22 @@ class CreateForm(FieldTripForm):
     def __init__(self, *args, **kwargs):
         super(CreateForm, self).__init__(*args, **kwargs)
         self.fields['supervisor'].queryset = Approver.objects.filter(roles__code='SUPERVISOR')
+
+class NurseForm(FieldTripForm):
+    """
+    This is the form a nurse sees when they got to approve a field trip request.
+    They can only edit things in the nurse section.
+    
+    """
+
+    class Meta(FieldTripForm.Meta):
+        fields = ['nurse_required', 'nurse_comments', 'nurse_name']
+
+class ApprovalForm(forms.ModelForm):
+
+    class Meta:
+        model = Approval
+        fields = ['approved', 'comments']
 
 class ChaperoneForm(forms.ModelForm):
 

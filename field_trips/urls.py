@@ -8,5 +8,6 @@ urlpatterns = [
     path('<int:pk>/', views.detail, name='detail'),
     path('calendar', views.calendar, name='calendar'),
     path('create', views.create, name='create'),
-    path('approve', views.approve, name='approve'),
+    path('approve', views.approve_index, name='approve_index'),
+    path('approve/<int:pk>', views.approve, name='approve'),
 ]
