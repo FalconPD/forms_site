@@ -22,32 +22,28 @@ class Role(models.Model):
     def __str__(self):
         return self.name
 
-class Approver(models.Model):
-    email = models.EmailField()
-    name = models.CharField(max_length=64)
-    title = models.CharField(max_length=64)
-    roles = models.ManyToManyField(Role)
-
-    class Meta:
-        ordering = ['name']
-
-    def __str__(self):
-        buildings = ", ".join(map(str, self.building_set.all()))
-        if len(buildings) > 0:
-            return '{} {}, {}'.format(self.name, self.title, buildings)
-        else:
-            return '{}: {}'.format(self.name, self.title) 
-
 class Building(models.Model):
     name = models.CharField(max_length=64)
     code = models.CharField(max_length=8)
-    approvers = models.ManyToManyField(Approver)
 
     class Meta:
         ordering = ['name']
 
     def __str__(self):
         return self.name
+
+class Approver(models.Model):
+    email = models.EmailField()
+    name = models.CharField(max_length=64)
+    title = models.CharField(max_length=64)
+    roles = models.ManyToManyField(Role)
+    buildings = models.ManyToManyField(Building)
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return '{} {}'.format(self.name, self.title)
 
 class FieldTrip(models.Model):
     # General Info
@@ -112,7 +108,7 @@ class FieldTrip(models.Model):
         Approval(field_trip=self, role=role, building=building).save()
         approvers = Approver.objects.filter(roles=role)
         if building:
-            approvers = approvers.filter(building=building)
+            approvers = approvers.filter(buildings=building)
         for approver in approvers:
             print("Emailing notification to {}".format(approver))
 
@@ -120,7 +116,7 @@ class FieldTrip(models.Model):
         role = Role.objects.filter(code=code)[0]
         print("Checking approval for {} {}".format(role, building))
         if not self.approval_set.filter(role=role).exists():
-            self.add_approval(role, self.building)
+            self.add_approval(role, building)
             return "In Progress"
         elif self.approval_set.filter(role=role, approved=None).exists():
             return "In Progress"
@@ -152,6 +148,7 @@ class FieldTrip(models.Model):
             result = self.check_or_add_approval(*approval)
             if result != "Approved":
                 self.status = result
+                self.save()
                 return
 
         # if we need extra vehicles add an approval for facilities
@@ -159,12 +156,14 @@ class FieldTrip(models.Model):
             result = self.check_or_add_approval("FACILITES", None)
             if result != "Approved":
                 self.status = result
+                self.save()
                 return
 
         # always add transportation
         result = self.check_or_add_approval("TRANSPORTATION", None)
         if result != "Approved":
             self.status = result
+            self.save()
             return
 
         # if a nurse is requred add an approval for PPS
@@ -172,6 +171,7 @@ class FieldTrip(models.Model):
             result = self.check_or_add_approval("PPS", None)
             if result != "Approved":
                 self.status = result
+                self.save()
                 return
 
         # the field trip secretary will approve it once it is approved by the
@@ -179,9 +179,11 @@ class FieldTrip(models.Model):
         result = self.check_or_add_approval("FIELDTRIP SECRETARY", None)
         if result != "Approved":
             self.status = result
+            self.save()
             return
 
         self.status = "Approved"
+        self.save()
         return
 
     def first_needed_approval_for_approver(self, approver):
@@ -195,7 +197,7 @@ class FieldTrip(models.Model):
         for approval in self.approval_set.filter(approved=None):
             if approval.role in approver.roles.all():
                 if approval.building:
-                    if approval.building in approver.building_set.all():
+                    if approval.building in approver.buildings.all():
                         return approval
                 else:
                     return approval
@@ -218,7 +220,7 @@ class Approval(models.Model):
 
     approver = models.ForeignKey(Approver, on_delete=models.CASCADE,
         blank=True, null=True)
-    approved = models.NullBooleanField()
+    approved = models.NullBooleanField("Do you approve this field trip?")
     comments = models.TextField(blank=True)
     field_trip = models.ForeignKey(FieldTrip, on_delete=models.CASCADE)
     role = models.ForeignKey(Role, on_delete=models.CASCADE)

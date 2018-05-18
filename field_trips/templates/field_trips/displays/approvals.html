@@ -24,7 +24,7 @@
             <td>{{ approval.role }}</td>
             <td>{{ approval.building }}</td>
             <td>
-                <a href="mailto:{{ approval.approver.email }}">
+                <a href="mailto:{{ approval.approver.email }}?subject=Field Trip #{{ field_trip.id }}">
                     {{ approval.approver.name }}
                 </a>
             </td>

@@ -11,7 +11,7 @@
 <div class="row">
     <div class="col-md">
         <span class="label">Submitter:</span>
-        <a href="mailto:{{ field_trip.submitter.email }}">
+        <a href="mailto:{{ field_trip.submitter.email }}?subject=Field Trip #{{ field_trip.id }}">
             {{ field_trip.submitter.first_name }}
             {{ field_trip.submitter.last_name }}
         </a>

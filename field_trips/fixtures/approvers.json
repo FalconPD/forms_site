@@ -6,9 +6,8 @@
          "name":"Patricia Dinsmore",
          "title":"Principal",
          "email":"pdinsmor@monroe.k12.nj.us",
-         "roles":[
-            1
-         ]
+         "roles":[ 1 ],
+         "buildings":[ 1 ]
       }
    },
    {
@@ -18,9 +17,8 @@
          "name":"Marie McNutt",
          "title":"Nurse",
          "email":"mmcnutt@monroe.k12.nj.us",
-         "roles":[
-            2
-         ]
+         "roles":[ 2 ],
+         "buildings":[ 1 ]
       }
    },
    {
@@ -30,9 +28,8 @@
          "name":"Dawn Graziano",
          "title":"Principal",
          "email":"dgrazian@monroe.k12.nj.us",
-         "roles":[
-            1
-         ]
+         "roles":[ 1 ],
+         "buildings":[ 2 ]
       }
    },
    {
@@ -42,9 +39,8 @@
          "name":"Bonnie Essig",
          "title":"Nurse",
          "email":"bessig@monroe.k12.nj.us",
-         "roles":[
-            2
-         ]
+         "roles":[ 2 ],
+         "buildings":[ 2 ]
       }
    },
    {
@@ -54,9 +50,8 @@
          "name":"Zachary Morolda",
          "title":"Supervisor of Arts and Careers",
          "email":"zmorolda@monroe.k12.nj.us",
-         "roles":[
-            3
-         ]
+         "roles":[ 3 ],
+         "buildings":[]
       }
    },
    {
@@ -66,9 +61,8 @@
          "name":"Erinn Mahoney",
          "title":"Principal",
          "email":"emahoney@monroe.k12.nj.us",
-         "roles":[
-            1
-         ]
+         "roles":[ 1 ],
+         "buildings":[ 3 ]
       }
    },
    {
@@ -78,9 +72,8 @@
          "name":"Marlena Beaton",
          "title":"Nurse",
          "email":"mbeaton@monroe.k12.nj.us",
-         "roles":[
-            2
-         ]
+         "roles":[ 2 ],
+         "buildings":[ 3 ]
       }
    },
    {
@@ -90,9 +83,8 @@
          "name":"Antonio Pepe",
          "title":"Principal",
          "email":"apepe@monroe.k12.nj.us",
-         "roles":[
-            1
-         ]
+         "roles":[ 1 ],
+         "buildings":[ 4 ]
       }
    },
    {
@@ -102,9 +94,8 @@
          "name":"Susan Talocka",
          "title":"Nurse",
          "email":"stalocka@monroe.k12.nj.us",
-         "roles":[
-            2
-         ]
+         "roles":[ 2 ],
+         "buildings":[ 4 ]
       }
    },
    {
@@ -114,9 +105,8 @@
          "name":"Adam Layman",
          "title":"Principal",
          "email":"alayman@monroe.k12.nj.us",
-         "roles":[
-            1
-         ]
+         "roles":[ 1 ],
+         "buildings":[ 6 ]
       }
    },
    {
@@ -126,9 +116,8 @@
          "name":"Maryann Procopio",
          "title":"Nurse",
          "email":"mprocopi@monroe.k12.nj.us",
-         "roles":[
-            2
-         ]
+         "roles":[ 2 ],
+         "buildings":[ 6 ]
       }
    },
    {
@@ -138,9 +127,8 @@
          "name":"Kristen Mignoli",
          "title":"Principal",
          "email":"kmignoli@monroe.k12.nj.us",
-         "roles":[
-            1
-         ]
+         "roles":[ 1 ],
+         "buildings":[ 5 ]
       }
    },
    {
@@ -150,9 +138,8 @@
          "name":"Cindy Weiler",
          "title":"Nurse",
          "email":"cweiler@monroe.k12.nj.us",
-         "roles":[
-            2
-         ]
+         "roles":[ 2 ],
+         "buildings":[ 5 ]
       }
    },
    {
@@ -162,9 +149,8 @@
          "name":"Chari Chanley",
          "title":"Principal",
          "email":"cchanley@monroe.k12.nj.us",
-         "roles":[
-            1
-         ]
+         "roles":[ 1 ],
+         "buildings":[ 8 ]
       }
    },
    {
@@ -174,9 +160,8 @@
          "name":"Robert Goodall",
          "title":"Principal",
          "email":"rgoodall@monroe.k12.nj.us",
-         "roles":[
-            1
-         ]
+         "roles":[ 1 ],
+         "buildings":[ 7 ]
       }
    },
    {
@@ -186,9 +171,8 @@
          "name":"Debbie Force",
          "title":"Nurse",
          "email":"dforce@monroe.k12.nj.us",
-         "roles":[
-            2
-         ]
+         "roles":[ 2 ],
+         "buildings":[ 8 ]
       }
    },
    {
@@ -198,9 +182,8 @@
          "name":"Alicia Realmuto",
          "title":"Nurse",
          "email":"arealmut@monroe.k12.nj.us",
-         "roles":[
-            2
-         ]
+         "roles":[ 2 ],
+         "buildings":[ 8 ]
       }
    },
    {
@@ -210,9 +193,8 @@
          "name":"Catherine Lestingi",
          "title":"Nurse",
          "email":"clesting@monroe.k12.nj.us",
-         "roles":[
-            2
-         ]
+         "roles":[ 2 ],
+         "buildings":[ 7 ]
       }
    },
    {
@@ -222,9 +204,8 @@
          "name":"Leah Nicholas",
          "title":"Nurse",
          "email":"lnichola@monroe.k12.nj.us",
-         "roles":[
-            2
-         ]
+         "roles":[ 2 ],
+         "buildings":[ 7 ]
       }
    },
    {
@@ -234,9 +215,8 @@
          "name":"Danielle LeMunyon",
          "title":"Nurse",
          "email":"dlemunyo@monroe.k12.nj.us",
-         "roles":[
-            2
-         ]
+         "roles":[ 2 ],
+         "buildings":[ 7 ]
       }
    },
    {
@@ -246,9 +226,8 @@
          "name":"Greg Beyer",
          "title":"Supervisor of Health and Physical Education",
          "email":"gbeyer@monroe.k12.nj.us",
-         "roles":[
-            3
-         ]
+         "roles":[ 3 ],
+         "buildings":[]
       }
    },
    {
@@ -258,9 +237,8 @@
          "name":"Bonnie Casaletto",
          "title":"Supervisor of Science and Social Studies",
          "email":"bcasalet@monroe.k12.nj.us",
-         "roles":[
-            3
-         ]
+         "roles":[ 3 ],
+         "buildings":[]
       }
    },
    {
@@ -270,9 +248,8 @@
          "name":"Michele Critelli",
          "title":"Supervisor of Guidance",
          "email":"mcritell@monroe.k12.nj.us",
-         "roles":[
-            3
-         ]
+         "roles":[ 3 ],
+         "buildings":[]
       }
    },
    {
@@ -282,9 +259,8 @@
          "name":"Susan Gasko",
          "title":"Supervisor of Mathematics and Educational Technology",
          "email":"sgasko@monroe.k12.nj.us",
-         "roles":[
-            3
-         ]
+         "roles":[ 3 ],
+         "buildings":[]
       }
    },
    {
@@ -294,9 +270,8 @@
          "name":"Monica Heinze",
          "title":"Supervisor of Special Education",
          "email":"mheinze@monroe.k12.nj.us",
-         "roles":[
-            3
-         ]
+         "roles":[ 3 ],
+         "buildings":[]
       }
    },
    {
@@ -306,9 +281,8 @@
          "name":"Laurie McConnell",
          "title":"Supervisor of Grants, Testing, and Special Projects",
          "email":"lmcconne@monroe.k12.nj.us",
-         "roles":[
-            3
-         ]
+         "roles":[ 3 ],
+         "buildings":[]
       }
    },
    {
@@ -318,9 +292,8 @@
          "name":"Kelly Roselle",
          "title":"Supervisor of Foreign Language, Media, and Language Arts",
          "email":"kroselle@monroe.k12.nj.us",
-         "roles":[
-            3
-         ]
+         "roles":[ 3 ],
+         "buildings":[]
       }
    },
    {
@@ -330,9 +303,8 @@
          "name":"Dori Alvich",
          "title":"Assistant Superintendent",
          "email":"dalvich@monroe.k12.nj.us",
-         "roles":[
-            4
-         ]
+         "roles":[ 4 ],
+         "buildings":[]
       }
    },
    {
@@ -342,9 +314,8 @@
          "name":"Marianne Taylor",
          "title":"Field Trip Secretary",
          "email":"mtaylor@monroe.k12.nj.us",
-         "roles":[
-            5
-         ]
+         "roles":[ 5 ],
+         "buildings":[]
       }
    },
    {
@@ -354,9 +325,8 @@
          "name":"Florence Muniz",
          "title":"Secretary of Pupil Personnel Services",
          "email":"fmuniz@monroe.k12.nj.us",
-         "roles":[
-            6
-         ]
+         "roles":[ 6 ],
+         "buildings":[]
       }
    },
    {
@@ -366,9 +336,8 @@
          "name":"Jerry Tague",
          "title":"Head of Facilities",
          "email":"jtague@monroe.k12.nj.us",
-         "roles":[
-            7
-         ]
+         "roles":[ 7 ],
+         "buildings":[]
       }
    },
    {
@@ -378,9 +347,8 @@
          "name":"Joann Byrnes",
          "title":"Secretary of Transportation",
          "email":"jbyrnes@monroe.k12.nj.us",
-         "roles":[
-            8
-         ]
+         "roles":[ 8 ],
+         "buildings":[]
       }
    }
 ]
