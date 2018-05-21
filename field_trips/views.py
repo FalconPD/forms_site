@@ -133,8 +133,6 @@ def create(request):
             for chaperone in chaperone_set:
                 chaperone.field_trip = field_trip
                 chaperone.save()
-            # Process the approvals
-            field_trip.process_approvals()
             return redirect('field_trips:index')
     else:
         formset = ChaperoneFormFactory(queryset=Chaperone.objects.none())

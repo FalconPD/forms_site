@@ -46,8 +46,28 @@ class Approver(models.Model):
         return '{} {}'.format(self.name, self.title)
 
 class FieldTrip(models.Model):
+    # Status
+    ARCHIVED = 0
+    IN_PROGRESS = 1
+    APPROVED = 2
+    DENIED = 3
+    DROPPED = 4
+    DRAFT = 5
+    STATUS_CHOICES = (
+        (ARCHIVED, "Archived"),
+        (IN_PROGRESS, "In Progress"),
+        (APPROVED, "Approved"),
+        (DENIED, "Denied"),
+        (DROPPED, "Dropped"),
+        (DRAFT, "Draft"),
+    )
+    status = models.IntegerField(choices=STATUS_CHOICES, default=IN_PROGRESS)
+
+    # update() creates approvals, but can't save them until AFTER this field
+    # trip is saved. This keeps track of the approvals we need to save.
+    new_approvals = []
+
     # General Info
-    status = models.CharField(max_length=64, default="In Progress")
     submitter = models.ForeignKey(User, on_delete=models.CASCADE)
     submitted = models.DateTimeField("Submitted", auto_now_add=True)
     destination = models.CharField(max_length=64)
@@ -97,6 +117,18 @@ class FieldTrip(models.Model):
     nurse_comments = models.TextField(blank=True)
     nurse_name = models.CharField(max_length=64, blank=True)
 
+    def save(self, *args, **kwargs):
+        """
+        Runs the update command every time this model is saved. It also saves
+        all the related approvers as update may add them
+        """
+        self.update()
+        super().save(*args, **kwargs)
+        import pdb; pdb.set_trace()
+        for approval in self.new_approvals:
+            approval.field_trip = self # why can't I set this in add_approval()?
+            approval.save()
+
     def __str__(self):
         return self.destination
 
@@ -104,86 +136,80 @@ class FieldTrip(models.Model):
         return self.chaperone_set.count() + self.pupils + self.teachers
 
     def add_approval(self, role, building=None):
+        """
+        Creates a new, unsigned approval for a role, building and notifies
+        possible approvers.
+        """
         print("Creating new approval for {} {}".format(role, building))
-        Approval(field_trip=self, role=role, building=building).save()
+        self.new_approvals.append(
+            Approval(role=role, building=building)
+        )
         approvers = Approver.objects.filter(roles=role)
         if building:
             approvers = approvers.filter(buildings=building)
         for approver in approvers:
             print("Emailing notification to {}".format(approver))
 
-    def check_or_add_approval(self, code, building=None):
+    def check_approval(self, code, building):
+        """
+        Checks to see if there is an approval for a given role, building. Adds
+        the approval if needed. Returns True if the update function should
+        continue.
+        """
         role = Role.objects.filter(code=code)[0]
         print("Checking approval for {} {}".format(role, building))
         if not self.approval_set.filter(role=role).exists():
             self.add_approval(role, building)
-            return "In Progress"
+            return False
         elif self.approval_set.filter(role=role, approved=None).exists():
-            return "In Progress"
+            return False
         elif self.approval_set.filter(role=role, approved=False).exists():
-            return "Denied"
+            self.status = self.DENIED
+            return False
         elif self.approval_set.filter(role=role, approved=True).exists():
-            return "Approved"
+            return True
 
-    def process_approvals(self):
-        """
-        This should be called every time the form is changed. It sets up
-        approvals, notifies approvers, and contains the primary logic for how
-        a form is processed
-        """
-        # Only check approvals for forms that haven't yet been approved or
-        # denied
-        if self.status != "In Progress":
-            return
-
-        # The first four approvals have no conditions
-        approvals = (
-            ("NURSE", self.building),
-            ("PRINCIPAL", self.building),
-            ("SUPERVISOR", None),
-            ("ASSISTANT SUPERINTENDENT", None)
-        )
-
-        for approval in approvals:
-            result = self.check_or_add_approval(*approval)
-            if result != "Approved":
-                self.status = result
-                self.save()
-                return
-
-        # if we need extra vehicles add an approval for facilities
+    def check_approval_if_extra_vehciles(self, code, building):
         if len(self.vehicle_set) > 0:
-            result = self.check_or_add_approval("FACILITES", None)
-            if result != "Approved":
-                self.status = result
-                self.save()
-                return
+            print("Extra vehicles are needed on this trip")
+            return self.check_approval(code, building)
+        else:
+            return True
 
-        # always add transportation
-        result = self.check_or_add_approval("TRANSPORTATION", None)
-        if result != "Approved":
-            self.status = result
-            self.save()
-            return
-
-        # if a nurse is requred add an approval for PPS
+    def check_approval_if_nurse_needed(self, code, building):
         if self.nurse_required:
-            result = self.check_or_add_approval("PPS", None)
-            if result != "Approved":
-                self.status = result
-                self.save()
-                return
+            print("A nurse is needed on this trip")
+            return self.check_approval(code, building)
+        else:
+            return True
 
-        # the field trip secretary will approve it once it is approved by the
-        # board
-        result = self.check_or_add_approval("FIELDTRIP SECRETARY", None)
-        if result != "Approved":
-            self.status = result
-            self.save()
+    def update(self):
+        """
+        This is called every time the form is saved BEFORE it is commited to
+        the database. It sets up approvals, notifies approvers, and contains
+        the primary logic for how a form is processed
+        """
+        # Only check approvals for forms that are active
+        if self.status != self.IN_PROGRESS:
             return
 
-        self.status = "Approved"
-        self.save()
+        steps = [
+            (self.check_approval, ("NURSE", self.building)),
+            (self.check_approval, ("PRINCIPAL", self.building)),
+            (self.check_approval, ("SUPERVISOR", None)),
+            (self.check_approval, ("ASSISTANT SUPERINTENDENT", None)),
+            (self.check_approval_if_extra_vehicles, ("FACILITIES", None)),
+            (self.check_approval, ("TRANSPORTATION", None)),
+            (self.check_approval_if_nurse_needed, ("PPS", None)),
+            (self.check_approval, ("FIELDTRIP SECRETARY", None)),
+        ]
+
+        for step, args in steps:
+            if not step(*args):
+                return
+
+        # if we've made it this far, we are approved by everyone and the board
+        self.status = self.APPROVED
         return
 
     def first_needed_approval_for_approver(self, approver):
@@ -191,16 +217,12 @@ class FieldTrip(models.Model):
         Returns the first approval needed for a particular approver. If there
         is no approval needed for that approver it returns None.
         """
-        if not self.status == "In Progress":
+        if not self.status != self.IN_PROGRESS:
             return None
 
-        for approval in self.approval_set.filter(approved=None):
-            if approval.role in approver.roles.all():
-                if approval.building:
-                    if approval.building in approver.buildings.all():
-                        return approval
-                else:
-                    return approval
+        for approval in self.approval_set:
+            if approval.can_sign(approver):
+                return approval
         return None
 
 class Chaperone(models.Model):
@@ -231,3 +253,17 @@ class Approval(models.Model):
     def __str__(self):
         return "Role: {}, Building: {}, Approver: {}, Approved: {}".format(
             self.role, self.building, self.approver, self.approved)
+
+    def can_sign(self, approver):
+        """
+        Checks to see if this approval can be signed by an approver. Prevents
+        signing something multiple times.
+        """
+        if self.approved != None or self.approver != None:
+            return False
+        if not self.role in approver.roles.all():
+            return False
+        if self.building:
+            if not self.building in approver.buildings.all():
+                return False
+        return True
