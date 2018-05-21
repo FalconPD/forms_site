@@ -7,7 +7,8 @@ from django.core.exceptions import PermissionDenied
 from django.urls import reverse
 
 from .forms import CreateForm, ChaperoneForm, NurseForm, ApprovalForm
-from .forms import PrincipalForm
+from .forms import PrincipalForm, SupervisorForm, AssistantSuperintendentForm
+from .forms import FacilitiesForm
 from .models import FieldTrip, Chaperone, Approver
 
 DISPLAYS = 'field_trips/displays/'
@@ -18,8 +19,7 @@ def approve(request, pk):
     """
     Make sure the person CAN approve this field trip and then show them the
     view that corresponds to the needed approval. If they can provide multiple
-    needed approvals, this will show the FIRST approval. Be sure to call
-    process_approvals after something has been approved.
+    needed approvals, this will show the FIRST approval.
     """
 
     # Check permissions
@@ -31,45 +31,89 @@ def approve(request, pk):
     if not approval:
         raise PermissionDenied
 
-    # Setup parts of the view specific to roles
-    if approval.role.code == 'NURSE':
-        title = "Nurse Approval for Field Trip #{}".format(field_trip.id)
-        cards = (
-            ("Directions", "field_trips/approve/nurse_directions.html"),
-            ("General Information", DISPLAYS + 'general.html'),
-            ("Nurse", FORMS + 'nurse.html'),
-            ("Approval", FORMS + 'approval.html'),
-        )
-        if request.method == 'POST':
-            form = NurseForm(request.POST, instance=field_trip)
-        else:
-            form = NurseForm(instance=field_trip)
-    elif approval.role.code == 'PRINCIPAL':
-        title = "Principal Approval for Field Trip #{}".format(field_trip.id)
-        cards = (
-            ("Directions", "field_trips/approve/principal_directions.html"),
-            ("General Information", DISPLAYS + 'general.html'),
-            ("Funding", FORMS + 'funding.html'),
-            ("Approval", FORMS + 'approval.html'),
-        )
-        if request.method == 'POST':
-            form = PrincipalForm(request.POST, instance=field_trip)
-        else:
-            form = PrincipalForm(instance=field_trip)
+    directions_dir = 'field_trips/approve/directions/'
+    view_setup = {
+        'NURSE': (
+            "Nurse Approval",
+            [
+                ("Directions", directions_dir +'nurse.html'),
+                ("General Information", DISPLAYS + 'general.html'),
+                ("Nurse", FORMS + 'nurse.html'),
+            ],
+            NurseForm,
+        ),
+        'PRINCIPAL': (
+            "Principal Approval",
+            [
+                ("Directions", directions_dir + 'principal.html'),
+                ("General Information", DISPLAYS + 'general.html'),
+                ("Funding", FORMS + 'funding.html'),
+            ],
+            PrincipalForm,
+        ),
+        'SUPERVISOR': (
+            "Supervisor Approval",
+            [
+                ("Directions", directions_dir + 'supervisor.html'),
+                ("General Information", DISPLAYS + 'general.html'),
+                ("Curriculum", FORMS + 'curriculum.html'),
+            ],
+            SupervisorForm,
+        ),
+        'ASSISTANT SUPERINTENDENT': (
+            "Assistant Superintendent Approval",
+            [
+                ("Directions",directions_dir + 'assistant_superintendent.html'),
+                ("General Information", DISPLAYS + 'general.html'),
+                ("Transportation", DISPLAYS + 'transportation.html'),
+                ("Funding", FORMS + 'funding.html'),
+                ("Curriculum", FORMS + 'curriculum.html'),
+                ("Nurse", DISPLAYS + 'nurse.html'),
+            ],
+            AssistantSuperintendentForm,
+        ),
+        'FACILITIES': (
+            "Facilities Approval",
+            [
+                ("Directions", directions_dir + 'facilities.html'),
+                ("General Information", DISPLAYS + 'general.html'),
+                ("Transportation", FORMS + 'transportation.html'),
+            ],
+            FacilitiesForm,
+        ),
+        'PPS': (
+            "Pupil Personnel Services",
+            [
+                ("Directions", directions_dir + 'pps.html'),
+                ("General Information", DISPLAYS + 'general.html'),
+                ("Nurse", FORMS + 'nurse.html'),
+            ],
+            NurseForm,
+        ),
+
+    }
+
+    if approval.role.code in view_setup:
+        title, cards, ModelForm = view_setup[approval.role.code]
+        title += " for Field Trip #{}".format(field_trip.id)
+        cards.append(("Approvals", DISPLAYS + 'approvals.html'))
+        cards.append(("Approval", FORMS + 'approval.html'))
     else:
         return HttpResponse(
-            "Unable to render role for approval: {}".format(approval))
+            "Unable to render role for approval: {}".format(approval)
+        )
 
     if request.method == 'POST': # check what was submitted
+        form = ModelForm(request.POST, instance=field_trip)
         approval_form = ApprovalForm(request.POST, instance=approval)
         if approval_form.is_valid() and form.is_valid():
             approval = approval_form.save(commit=False)
             approval.approver = approver
             approval.save()
             field_trip.save()
-            field_trip.process_approvals()
             return redirect('field_trips:approve_index')
     else: # or create a new approval form
+        form = ModelForm(instance=field_trip)
         approval_form = ApprovalForm(instance=approval)
 
     # render the approval view
@@ -97,7 +141,7 @@ def approve_index(request):
         raise PermissionDenied
 
     field_trips = []
-    for field_trip in FieldTrip.objects.filter(status="In Progress"):
+    for field_trip in FieldTrip.objects.filter(status=FieldTrip.IN_PROGRESS):
         if field_trip.first_needed_approval_for_approver(approver):
             field_trips.append(field_trip)
 
@@ -108,7 +152,6 @@ def approve_index(request):
 def create(request):
     """
     Creates a view that allows ANY logged in user to submit a field trip request
-    It also runs process_approvals after a valid request comes in
     """
     title = "Submit a Field Trip Request"
     cards = (

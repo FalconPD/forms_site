@@ -1,0 +1,1 @@
+A new field trip request for {{ destination }} has been submitted by {{ first_name }} {{ last_name }} ({{ email }}). Please use the following link to approve or deny it: {{ url }} 

@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import Q
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.urls import reverse
 
 class Grade(models.Model):
     name = models.CharField(max_length=64)
@@ -63,10 +65,6 @@ class FieldTrip(models.Model):
     )
     status = models.IntegerField(choices=STATUS_CHOICES, default=IN_PROGRESS)
 
-    # update() creates approvals, but can't save them until AFTER this field
-    # trip is saved. This keeps track of the approvals we need to save.
-    new_approvals = []
-
     # General Info
     submitter = models.ForeignKey(User, on_delete=models.CASCADE)
     submitted = models.DateTimeField("Submitted", auto_now_add=True)
@@ -119,15 +117,14 @@ class FieldTrip(models.Model):
 
     def save(self, *args, **kwargs):
         """
-        Runs the update command every time this model is saved. It also saves
-        all the related approvers as update may add them
+        Runs the update command every time this model is saved. When this
+        object is first created, we may have to save() twice so that added
+        approvals have an ID to reference us by
         """
+        if not self.id:
+            super().save(*args, **kwargs)
         self.update()
-        super().save(*args, **kwargs)
-        import pdb; pdb.set_trace()
-        for approval in self.new_approvals:
-            approval.field_trip = self # why can't I set this in add_approval()?
-            approval.save()
+        super().save(args, kwargs)
 
     def __str__(self):
         return self.destination
@@ -135,53 +132,89 @@ class FieldTrip(models.Model):
     def total(self):
         return self.chaperone_set.count() + self.pupils + self.teachers
 
-    def add_approval(self, role, building=None):
-        """
-        Creates a new, unsigned approval for a role, building and notifies
-        possible approvers.
-        """
-        print("Creating new approval for {} {}".format(role, building))
-        self.new_approvals.append(
-            Approval(role=role, building=building)
-        )
-        approvers = Approver.objects.filter(roles=role)
-        if building:
-            approvers = approvers.filter(buildings=building)
-        for approver in approvers:
-            print("Emailing notification to {}".format(approver))
+    def print_status(self):
+        for choice, text in self.STATUS_CHOICES:
+            if choice == self.status:
+                return text
+        return None
 
-    def check_approval(self, code, building):
+    def send_approval_request(self, approver):
+        base = 'field_trips/email/approval_request'
+        context = {
+            'url': reverse('field_trips:approve_index'),
+            'destination': self.destination,
+            'first_name': self.submitter.first_name,
+            'last_name': self.submitter.last_name,
+            'email': self.submitter.email,
+        }
+        msg_plain = render_to_string(base + '.txt', context)
+        send_mail(
+            "Field Trip #{} Approval Requested".format(self.id),
+            msg_plain,
+            'forms@monroe.k12.nj.us',
+            [approver.email],
+        )
+
+    class InProgress(Exception):
+        pass
+
+    class Denied(Exception):
+        pass
+
+    def add_approval(self, role, approver, building):
         """
-        Checks to see if there is an approval for a given role, building. Adds
-        the approval if needed. Returns True if the update function should
-        continue.
+        Creates a new, unsigned approval for a role and optional building,
+        approver. Also notifies possible approvers via email.
+        """
+        print("Creating new approval for {} {} {}".format(role, approver,
+            building))
+        Approval(field_trip=self, role=role, building=building,
+            approver=approver).save()
+
+        if approver:
+            self.send_approval_request(approver)
+        else:
+            possible_approvers = Approver.objects.filter(roles=role)
+            if building:
+                possible_approvers = possible_approvers.filter(
+                    buildings=building)
+            for possible_approver in possible_approvers.all():
+                self.send_approval_request(possible_approver)
+
+    def check_approval(self, code, building=None, approver=None):
+        """
+        Checks to see if there is an approval for a given role, approver,
+        building. Adds the approval if needed. Raises a Denied or InProgress
+        exception accordingly.
         """
         role = Role.objects.filter(code=code)[0]
-        print("Checking approval for {} {}".format(role, building))
-        if not self.approval_set.filter(role=role).exists():
-            self.add_approval(role, building)
-            return False
-        elif self.approval_set.filter(role=role, approved=None).exists():
-            return False
-        elif self.approval_set.filter(role=role, approved=False).exists():
-            self.status = self.DENIED
-            return False
-        elif self.approval_set.filter(role=role, approved=True).exists():
-            return True
+        print("Checking approval for {} {} {}".format(role, approver, building))
 
-    def check_approval_if_extra_vehciles(self, code, building):
-        if len(self.vehicle_set) > 0:
-            print("Extra vehicles are needed on this trip")
-            return self.check_approval(code, building)
-        else:
-            return True
+        # Find the approvals that meet our criterea
+        approvals = self.approval_set.filter(role=role)
+        if approver:
+            approvals = approvals.filter(approver=approver)
+        if building:
+            approvals = approvals.filter(building=building)
 
-    def check_approval_if_nurse_needed(self, code, building):
-        if self.nurse_required:
-            print("A nurse is needed on this trip")
-            return self.check_approval(code, building)
-        else:
-            return True
+        # If we can't find any, add one
+        if not approvals.exists():
+            self.add_approval(role, approver, building)
+            raise self.InProgress
+
+        # Just in case there are multiple, select the first
+        approval = approvals.all()[0]
+
+        # If it is unsigned, raise InProgress
+        if approval.approved == None:
+            raise self.InProgress
+
+        # If it is denied, raise Denied
+        if approval.approved == False:
+            raise self.Denied
+
+        # otherwise it must be approved
+        assert(approval.approved)
 
     def update(self):
         """
@@ -193,34 +226,36 @@ class FieldTrip(models.Model):
         if self.status != self.IN_PROGRESS:
             return
 
-        steps = [
-            (self.check_approval, ("NURSE", self.building)),
-            (self.check_approval, ("PRINCIPAL", self.building)),
-            (self.check_approval, ("SUPERVISOR", None)),
-            (self.check_approval, ("ASSISTANT SUPERINTENDENT", None)),
-            (self.check_approval_if_extra_vehicles, ("FACILITIES", None)),
-            (self.check_approval, ("TRANSPORTATION", None)),
-            (self.check_approval_if_nurse_needed, ("PPS", None)),
-            (self.check_approval, ("FIELDTRIP SECRETARY", None)),
-        ]
-
-        for step, args in steps:
-            if not step(*args):
-                return
-
-        # if we've made it this far, we are approved by everyone and the board
-        self.status = self.APPROVED
-        return
+        try:
+            self.check_approval("NURSE", building=self.building)
+            self.check_approval("PRINCIPAL", building=self.building)
+            self.check_approval("SUPERVISOR", approver=self.supervisor)
+            self.check_approval("ASSISTANT SUPERINTENDENT")
+            if self.extra_vehicles.exists():
+                self.check_approval("FACILITIES")
+            self.check_approval, ("TRANSPORTATION")
+            if self.nurse_required:
+                self.check_approval("PPS")
+            self.check_approval("FIELDTRIP SECRETARY")
+        
+            # if we've made it this far, we are approved by everyone
+            self.status = self.APPROVED
+            return
+        except self.InProgress:
+            return
+        except self.Denied:
+            self.status = self.DENIED
+            return
 
     def first_needed_approval_for_approver(self, approver):
         """
         Returns the first approval needed for a particular approver. If there
         is no approval needed for that approver it returns None.
         """
-        if not self.status != self.IN_PROGRESS:
+        if self.status != self.IN_PROGRESS:
             return None
 
-        for approval in self.approval_set:
+        for approval in self.approval_set.all():
             if approval.can_sign(approver):
                 return approval
         return None
@@ -256,14 +291,20 @@ class Approval(models.Model):
 
     def can_sign(self, approver):
         """
-        Checks to see if this approval can be signed by an approver. Prevents
-        signing something multiple times.
+        Checks to see if this approval can be signed by an approver
+        1. The approval has to be unsigned
+        2. If an approver is specified they have to be that approver
+        3. The approver has to have the required role
+        4. If a building is specified, the approver needs it
         """
-        if self.approved != None or self.approver != None:
+        if self.approved != None:
             return False
-        if not self.role in approver.roles.all():
+        if self.approver:
+            if self.approver != approver:
+                return False
+        if not (self.role in approver.roles.all()):
             return False
         if self.building:
-            if not self.building in approver.buildings.all():
+            if not (self.building in approver.buildings.all()):
                 return False
         return True

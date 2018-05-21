@@ -64,6 +64,32 @@ class PrincipalForm(FieldTripForm):
     class Meta(FieldTripForm.Meta):
         fields = ['costs', 'funds']
 
+class SupervisorForm(FieldTripForm):
+    """
+    This is the form a supervisor sees when they go to approve a field trip
+    request. They have the ability to adjust the curriculum questions.
+    """
+    class Meta(FieldTripForm.Meta):
+        fields = ['anticipatory', 'purpose', 'standards']
+
+class AssistantSuperintendentForm(FieldTripForm):
+    """
+    This is the form the assitant superintendent sees when they go to approve
+    a field trip request. They have the ability to adjust the funding and
+    curriculum sections.
+    """
+    class Meta(FieldTripForm.Meta):
+        fields = ['costs', 'funds', 'anticipatory', 'purpose', 'standards']
+
+class FacilitiesForm(FieldTripForm):
+    """
+    This is the form facilities sees when a field trip request specifies extra
+    vehicles. They have the ability to adjust the transportation section
+    """
+    class Meta(FieldTripForm.Meta):
+        fields = ['directions', 'buses', 'extra_vehicles', 'transported_by',
+            'transportation_comments']
+
 class ApprovalForm(forms.ModelForm):
     """
     This is what an approver sees when they have to approve something.
