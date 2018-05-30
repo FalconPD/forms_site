@@ -1,3 +1,5 @@
+from calendar import month_name
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.forms.models import modelformset_factory
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -5,6 +7,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.db.models.functions import Lower
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse
+from django.utils import timezone
 
 from .forms import CreateForm, ChaperoneForm, NurseForm, ApprovalForm
 from .forms import PrincipalForm, SupervisorForm, AssistantSuperintendentForm
@@ -197,7 +200,15 @@ def index(request):
 
 @login_required
 def calendar(request):
-    return HttpResponse("Not yet implemented")
+    month = 5
+    year = 2018
+    title = "{} {}".format(month_name[month], year)
+    return render(request, 'field_trips/calendar.html', {
+        'title': title,
+        'field_trips': None,
+        'month': month,
+        'year': year,
+    })
 
 @login_required
 def detail(request, pk):

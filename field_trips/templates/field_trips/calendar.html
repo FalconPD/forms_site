@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% load calendar %}
+
+{% block content %}
+
+{% get_calendar for month year as calendar %}
+<div class="row">
+    <div class="col-md"><h2 class="text-center mt-3">{{ title }}</h2></div>
+</div>
+<div class="row">
+    <div class="col-lg">
+        <table class="table table-bordered">
+            <tr>
+                <th>Sun</th>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+                <th>Sat</th>
+            </tr>
+            {% for week in calendar %}
+            <tr>
+                {% for day in week %}
+                <td>{{ day }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% endblock %}
