@@ -8,7 +8,7 @@
 <link
     rel="stylesheet"
     type="text/css"
-    href="{% static 'field_trips/calendar.css' %}">
+    href="{% static 'calendar.css' %}">
 </link>
 
 {% endblock %}
@@ -16,17 +16,27 @@
 
 {% block content %}
 
+<div class="row">
+    <div class="col-md"><h2 class="text-center mt-3">{{ title }}</h2></div>
+</div>
+
 {% get_calendar for month year as calendar %}
 <div class="row">
     <div class="col-md">
-        <div class="previous">
-            <a href="{{ previous_link}}">&lt;- {{ previous_title }}</a>
+        <div class="text-left">
+            <a href="{{ calendar.previous_link}}">
+                &lt;- {{ calendar.previous_title }}
+            </a>
         </div>
     </div>
-    <div class="col-md"><h2 class="title">{{ title }}</h2></div>
     <div class="col-md">
-        <div class="next">
-          <a href="{{ next_link}}">{{ next_title }} -&gt;</a>
+        <div class="text-center"><h4>{{ calendar.title }}</h4></div>
+    </div>
+    <div class="col-md">
+        <div class="text-right">
+          <a href="{{ calendar.next_link }}">
+            {{ calendar.next_title }} -&gt;
+          </a>
         </div>
     </div>
 </div>
@@ -42,7 +52,7 @@
                 <th>Fri</th>
                 <th>Sat</th>
             </tr>
-            {% for week in calendar %}
+            {% for week in calendar.calendar %}
             <tr class="calendar">
                 {% for day in week %}
                 <td>
@@ -56,8 +66,12 @@
                     <div class="row">
                         <div class="col-sm">
                             {% for event in events %}
-                                {% if event.date.date == day %}
-                                    <div class="event">{{ event.title }}</div>
+                                {% if event.date == day %}
+                                    <div class="text-center">
+                                        <a href="{{ event.link }}">
+                                            {{ event.title }}
+                                        </a>
+                                    </div>
                                 {% endif %}
                             {% endfor %}
                         </div>

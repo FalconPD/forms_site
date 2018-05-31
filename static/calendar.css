@@ -1,0 +1,13 @@
+tr.calendar {
+  height: 6em;
+  width: 6em;
+}
+
+div.day {
+  text-align: left;
+  font-weight: 600;
+}
+
+table {
+  table-layout: fixed;
+}
