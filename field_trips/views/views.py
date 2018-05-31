@@ -15,7 +15,8 @@ def index(request):
     field_trips = (FieldTrip
         .objects
         .filter(submitter = request.user)
-        .order_by(Lower(order_by)))
+        .order_by(order_by)
+    )
     return render(request, 'field_trips/index.html',
         {'field_trips': field_trips})
 

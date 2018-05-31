@@ -12,6 +12,7 @@ django-widget-tweaks = "*"
 django-allauth = "*"
 gunicorn = "*"
 django-heroku = "*"
+"psycopg2" = "*"
 
 
 [dev-packages]

@@ -4,6 +4,7 @@ from django.forms.models import modelformset_factory
 from django.urls import reverse
 
 from field_trips.forms import CreateForm, ChaperoneForm, Chaperone
+from .constants import FORMS
 
 @login_required
 def create(request):
