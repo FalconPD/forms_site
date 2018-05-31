@@ -25,7 +25,7 @@ SECRET_KEY = 'z=4c1c%p2as8)vv=h@l866(7n=2#7c3)8kti^w=4gl76%ei+e5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.herokuapp.com']
+ALLOWED_HOSTS = ['.herokuapp.com', 'localhost']
 
 # Application definition
 
@@ -140,7 +140,7 @@ SITE_ID = 1
 
 SOCIALACCOUNT_ADAPTER = 'forms_site.adapters.OverrideSocialAccountAdapter'
 
-LOGIN_URL = 'http://localhost:8000/accounts/microsoft/login'
+LOGIN_URL = '/accounts/microsoft/login'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
