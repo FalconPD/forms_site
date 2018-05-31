@@ -1,0 +1,32 @@
+h2.title {
+  text-align: center;
+  margin-top: 3em;
+}
+
+div.previous {
+  text-align: left;
+  margin-top: 3em;
+}
+
+div.next {
+  text-align: right;
+  margin-top: 3em;
+}
+
+tr.calendar {
+  height: 6em;
+  width: 6em;
+}
+
+div.day {
+  text-align: left;
+  font-weight: 600;
+}
+
+div.event {
+  text-align: center;
+}
+
+table {
+  table-layout: fixed;
+}

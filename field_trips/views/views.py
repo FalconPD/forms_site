@@ -47,9 +47,20 @@ def calendar(request):
     previous_title = calendar_title(previous_month, previous_year)
     next_link = calendar_link(next_month, next_year)
     next_title = calendar_title(next_month, next_year)
+    field_trips = (FieldTrip
+        .objects
+        .filter(departing__year=year)
+        .filter(departing__month=month)
+    )
+    events = []
+    for field_trip in field_trips:
+        events.append({
+            'title': field_trip.destination,
+            'date': field_trip.departing,
+        })
     return render(request, 'field_trips/calendar.html', {
         'title': title,
-        'field_trips': None,
+        'events': events,
         'month': month,
         'year': year,
         'previous_link': previous_link,
