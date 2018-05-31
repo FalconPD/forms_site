@@ -10,6 +10,7 @@ name = "pypi"
 django = "*"
 django-widget-tweaks = "*"
 django-allauth = "*"
+gunicorn = "*"
 
 
 [dev-packages]
