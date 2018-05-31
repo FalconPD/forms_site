@@ -6,7 +6,17 @@
 
 {% get_calendar for month year as calendar %}
 <div class="row">
+    <div class="col-md">
+        <div class="text-left mt-3">
+            <a href="{{ previous_link}}">&lt;- {{ previous_title }}</a>
+        </div>
+    </div>
     <div class="col-md"><h2 class="text-center mt-3">{{ title }}</h2></div>
+    <div class="col-md">
+        <div class="text-right mt-3">
+          <a href="{{ next_link}}">{{ next_title }} -&gt;</a>
+        </div>
+    </div>
 </div>
 <div class="row">
     <div class="col-lg">
@@ -21,9 +31,16 @@
                 <th>Sat</th>
             </tr>
             {% for week in calendar %}
-            <tr>
+            <tr style="height: 6em;">
                 {% for day in week %}
-                <td>{{ day }}</td>
+                <td>
+                    <div class="row">
+                        <div class="col-sm text-left">{{ day.day }}</div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-sm text-center">Sample</div>
+                    </div>
+                </td>
                 {% endfor %}
             </tr>
             {% endfor %}
