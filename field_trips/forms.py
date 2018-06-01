@@ -31,12 +31,7 @@ class CreateForm(FieldTripForm):
         fields = ['destination', 'group', 'grades', 'roster', 'itinerary',
             'pupils', 'teachers', 'departing', 'returning', 'directions',
             'buses', 'extra_vehicles', 'costs', 'funds', 'anticipatory',
-            'purpose', 'standards', 'building', 'supervisor']
-
-    def __init__(self, *args, **kwargs):
-        super(CreateForm, self).__init__(*args, **kwargs)
-        self.fields['supervisor'].queryset = Approver.objects.filter(roles__code='SUPERVISOR')
-
+            'purpose', 'standards', 'building', 'discipline']
 
 class NurseForm(FieldTripForm):
     """
@@ -89,6 +84,14 @@ class FacilitiesForm(FieldTripForm):
     class Meta(FieldTripForm.Meta):
         fields = ['directions', 'buses', 'extra_vehicles', 'transported_by',
             'transportation_comments']
+
+class FieldTripSecretaryForm(FieldTripForm):
+    """
+    This is the form the field trip secretary sees when they go to approve
+    a field trip. The next step is board approval
+    """
+    class Meta(FieldTripForm.Meta):
+        fields = ['destination']
 
 class ApprovalForm(forms.ModelForm):
     """

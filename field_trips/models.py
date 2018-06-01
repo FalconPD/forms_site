@@ -17,13 +17,6 @@ class Vehicle(models.Model):
     def __str__(self):
         return self.name
 
-class Role(models.Model):
-    code = models.CharField(max_length=32)
-    name = models.CharField(max_length=64)
-
-    def __str__(self):
-        return self.name
-
 class Building(models.Model):
     name = models.CharField(max_length=64)
     code = models.CharField(max_length=8)
@@ -34,18 +27,55 @@ class Building(models.Model):
     def __str__(self):
         return self.name
 
+class Discipline(models.Model):
+    title = models.CharField(max_length=64)
+
+    def __str__(self):
+        return self.title
+
+class Role(models.Model):
+    PRINCIPAL = 0
+    NURSE = 1
+    SUPERVISOR = 2
+    ASSISTANT_SUPERINTENDENT = 3
+    FIELD_TRIP_SECRETARY = 4
+    PPS = 5
+    FACILITIES = 6
+    TRANSPORTATION = 7
+    ROLE_CHOICES = (
+        (PRINCIPAL, "Principal"),
+        (NURSE, "Nurse"),
+        (SUPERVISOR, "Supervisor"),
+        (ASSISTANT_SUPERINTENDENT, "Assistant Superintendent"),
+        (FIELD_TRIP_SECRETARY, "Field Trip Secretary"),
+        (PPS, "Secretary of Pupil Personnel Services"),
+        (FACILITIES, "Head of Facilites"),
+        (TRANSPORTATION, "Secretary of Transportation"),
+    )
+    code = models.IntegerField(choices=ROLE_CHOICES)
+    building = models.ForeignKey(Building, on_delete=models.CASCADE,
+        null=True, blank=True)
+    discipline = models.ForeignKey(Discipline, on_delete=models.CASCADE,
+        null=True, blank=True)
+
+    def __str__(self):
+        text = "{}".format(self.ROLE_CHOICES[self.code][1])
+        if self.building:
+            text += ", {}".format(self.building)
+        if self.discipline:
+            text += ", {}".format(self.discipline)
+        return text
+
 class Approver(models.Model):
     email = models.EmailField()
     name = models.CharField(max_length=64)
-    title = models.CharField(max_length=64)
     roles = models.ManyToManyField(Role)
-    buildings = models.ManyToManyField(Building)
 
     class Meta:
         ordering = ['name']
 
     def __str__(self):
-        return '{} {}'.format(self.name, self.title)
+        return self.name
 
 class FieldTrip(models.Model):
     # Status
@@ -101,8 +131,9 @@ class FieldTrip(models.Model):
     funds = models.CharField("Source of Funds", max_length=8, choices=SOURCE_OF_FUNDS_CHOICES)
 
     # Curricular Tie Ins
-    supervisor = models.ForeignKey(Approver, on_delete=models.CASCADE,
-        verbose_name="Approving Supervisor")
+    discipline = models.ForeignKey(Discipline, on_delete=models.CASCADE,
+        verbose_name="Discipline",
+        help_text="Used to select supervisor for approval")
     standards = models.TextField("Unit(s) of Study / Curriculum Standards Addressed During Trip",
         help_text="Please be specific.")
     anticipatory = models.TextField("Description of Anticipatory Activity",
@@ -115,6 +146,9 @@ class FieldTrip(models.Model):
     nurse_comments = models.TextField(blank=True)
     nurse_name = models.CharField(max_length=64, blank=True)
 
+    def __str__(self):
+        return "FieldTrip: destination={}".format(self.destination)
+
     def save(self, *args, **kwargs):
         """
         Runs the update command every time this model is saved. When this
@@ -125,9 +159,6 @@ class FieldTrip(models.Model):
             super().save(*args, **kwargs)
         self.update()
         super().save(args, kwargs)
-
-    def __str__(self):
-        return self.destination
 
     def total(self):
         return self.chaperone_set.count() + self.pupils + self.teachers
@@ -155,55 +186,54 @@ class FieldTrip(models.Model):
             [approver.email],
         )
 
+    def add_approval(self, role):
+        """
+        Creates a new, unsigned approval for a role. Also notifies possible
+        approvers via email.
+        """
+        print("Creating new approval for {}".format(role))
+        Approval(field_trip=self, role=role).save()
+
+        for possible_approver in Approver.objects.filter(roles=role).all():
+            self.send_approval_request(possible_approver)
+
     class InProgress(Exception):
         pass
 
     class Denied(Exception):
         pass
 
-    def add_approval(self, role, approver, building):
+    def lookup_role(self, role_code, building=None, discipline=None):
         """
-        Creates a new, unsigned approval for a role and optional building,
-        approver. Also notifies possible approvers via email.
+        Find a role based on it's code and optionally a building and
+        discipline
         """
-        print("Creating new approval for {} {} {}".format(role, approver,
-            building))
-        Approval(field_trip=self, role=role, building=building,
-            approver=approver).save()
+        query = Role.objects.filter(code=role_code)
+        if building:
+            query = query.filter(building=building)
+        if discipline:
+            query = query.filter(discipline=discipline)
+        return query.get()
 
-        if approver:
-            self.send_approval_request(approver)
-        else:
-            possible_approvers = Approver.objects.filter(roles=role)
-            if building:
-                possible_approvers = possible_approvers.filter(
-                    buildings=building)
-            for possible_approver in possible_approvers.all():
-                self.send_approval_request(possible_approver)
-
-    def check_approval(self, code, building=None, approver=None):
+    def check_approval(self, role_code, building=None, discipline=None):
         """
-        Checks to see if there is an approval for a given role, approver,
+        Checks to see if there is an approval for a given role_code and
         building. Adds the approval if needed. Raises a Denied or InProgress
         exception accordingly.
         """
-        role = Role.objects.filter(code=code)[0]
-        print("Checking approval for {} {} {}".format(role, approver, building))
+        role = self.lookup_role(role_code, building, discipline)
+        print("Checking approval for {}".format(role))
 
         # Find the approvals that meet our criterea
         approvals = self.approval_set.filter(role=role)
-        if approver:
-            approvals = approvals.filter(approver=approver)
-        if building:
-            approvals = approvals.filter(building=building)
 
         # If we can't find any, add one
         if not approvals.exists():
-            self.add_approval(role, approver, building)
+            self.add_approval(role)
             raise self.InProgress
 
         # Just in case there are multiple, select the first
-        approval = approvals.all()[0]
+        approval = approvals.first()
 
         # If it is unsigned, raise InProgress
         if approval.approved == None:
@@ -227,16 +257,16 @@ class FieldTrip(models.Model):
             return
 
         try:
-            self.check_approval("NURSE", building=self.building)
-            self.check_approval("PRINCIPAL", building=self.building)
-            self.check_approval("SUPERVISOR", approver=self.supervisor)
-            self.check_approval("ASSISTANT SUPERINTENDENT")
+            self.check_approval(Role.NURSE, building=self.building)
+            self.check_approval(Role.PRINCIPAL, building=self.building)
+            self.check_approval(Role.SUPERVISOR, discipline=self.discipline)
+            self.check_approval(Role.ASSISTANT_SUPERINTENDENT)
             if self.extra_vehicles.exists():
-                self.check_approval("FACILITIES")
-            self.check_approval, ("TRANSPORTATION")
+                self.check_approval(Role.FACILITIES)
+            self.check_approval(Role.TRANSPORTATION)
             if self.nurse_required:
-                self.check_approval("PPS")
-            self.check_approval("FIELDTRIP SECRETARY")
+                self.check_approval(Role.PPS)
+            self.check_approval(Role.FIELDTRIP_SECRETARY)
         
             # if we've made it this far, we are approved by everyone
             self.status = self.APPROVED
@@ -268,8 +298,6 @@ class Chaperone(models.Model):
     def __str__(self):
         return self.name
 
-# NOTE: Approvers can have multiple buildings and roles but an Approval can only
-# be for ONE role and ONE building
 class Approval(models.Model):
 
     class Meta:
@@ -281,30 +309,20 @@ class Approval(models.Model):
     comments = models.TextField(blank=True)
     field_trip = models.ForeignKey(FieldTrip, on_delete=models.CASCADE)
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
-    building = models.ForeignKey(Building, on_delete=models.CASCADE,
-        blank=True, null=True)
     timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "Role: {}, Building: {}, Approver: {}, Approved: {}".format(
-            self.role, self.building, self.approver, self.approved)
+        return "Approval: role={}, approver={}, approved={}".format(
+            self.role, self.approver, self.approved)
 
     def can_sign(self, approver):
         """
         Checks to see if this approval can be signed by an approver
         1. The approval has to be unsigned
-        2. If an approver is specified they have to be that approver
-        3. The approver has to have the required role
-        4. If a building is specified, the approver needs it
+        2. The approver has to have the required role
         """
         if self.approved != None:
             return False
-        if self.approver:
-            if self.approver != approver:
-                return False
         if not (self.role in approver.roles.all()):
             return False
-        if self.building:
-            if not (self.building in approver.buildings.all()):
-                return False
         return True

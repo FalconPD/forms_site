@@ -6,8 +6,9 @@ from django.urls import reverse
 
 from field_trips.forms import NurseForm, ApprovalForm, PrincipalForm
 from field_trips.forms import SupervisorForm, AssistantSuperintendentForm
-from field_trips.forms import FacilitiesForm
-from field_trips.models import FieldTrip, Approver
+from field_trips.forms import FacilitiesForm, FieldTripSecretaryForm
+from field_trips.models import FieldTrip, Approver, Role
+from .constants import DISPLAYS, FORMS
 
 @login_required
 def approve(request, pk):
@@ -28,7 +29,7 @@ def approve(request, pk):
 
     directions_dir = 'field_trips/approve/directions/'
     view_setup = {
-        'NURSE': (
+        Role.NURSE: (
             "Nurse Approval",
             [
                 ("Directions", directions_dir +'nurse.html'),
@@ -37,7 +38,7 @@ def approve(request, pk):
             ],
             NurseForm,
         ),
-        'PRINCIPAL': (
+        Role.PRINCIPAL: (
             "Principal Approval",
             [
                 ("Directions", directions_dir + 'principal.html'),
@@ -46,7 +47,7 @@ def approve(request, pk):
             ],
             PrincipalForm,
         ),
-        'SUPERVISOR': (
+        Role.SUPERVISOR: (
             "Supervisor Approval",
             [
                 ("Directions", directions_dir + 'supervisor.html'),
@@ -55,7 +56,7 @@ def approve(request, pk):
             ],
             SupervisorForm,
         ),
-        'ASSISTANT SUPERINTENDENT': (
+        Role.ASSISTANT_SUPERINTENDENT: (
             "Assistant Superintendent Approval",
             [
                 ("Directions",directions_dir + 'assistant_superintendent.html'),
@@ -67,7 +68,7 @@ def approve(request, pk):
             ],
             AssistantSuperintendentForm,
         ),
-        'FACILITIES': (
+        Role.FACILITIES: (
             "Facilities Approval",
             [
                 ("Directions", directions_dir + 'facilities.html'),
@@ -76,7 +77,7 @@ def approve(request, pk):
             ],
             FacilitiesForm,
         ),
-        'PPS': (
+        Role.PPS: (
             "Pupil Personnel Services",
             [
                 ("Directions", directions_dir + 'pps.html'),
@@ -85,7 +86,13 @@ def approve(request, pk):
             ],
             NurseForm,
         ),
-
+        Role.FIELD_TRIP_SECRETARY: (
+            "Field Trip Secretary",
+            [
+                ("Directions", directions_dir + 'field_trip_secretary.html'),
+            ],
+            FieldTripSecretaryForm,
+        ),
     }
 
     if approval.role.code in view_setup:

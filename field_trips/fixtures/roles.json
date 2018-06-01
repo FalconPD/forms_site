@@ -1,66 +1,326 @@
 [
-   {
-      "model":"field_trips.role",
-      "pk":1,
-      "fields":{
-         "code":"PRINCIPAL",
-         "name":"Principal"
-      }
-   },
-   {
-      "model":"field_trips.role",
-      "pk":2,
-      "fields":{
-         "code":"NURSE",
-         "name":"Nurse"
-      }
-   },
-   {
-      "model":"field_trips.role",
-      "pk":3,
-      "fields":{
-         "code":"SUPERVISOR",
-         "name":"Supervisor"
-      }
-   },
-   {
-      "model":"field_trips.role",
-      "pk":4,
-      "fields":{
-         "code":"ASSISTANT SUPERINTENDENT",
-         "name":"Assistant Superintendent"
-      }
-   },
-   {
-      "model":"field_trips.role",
-      "pk":5,
-      "fields":{
-         "code":"FIELD TRIP SECRETARY",
-         "name":"Field Trip Secretary"
-      }
-   },
-   {
-      "model":"field_trips.role",
-      "pk":6,
-      "fields":{
-         "code":"PPS",
-         "name":"Secretary of Pupil Personnel Services"
-      }
-   },
-   {
-      "model":"field_trips.role",
-      "pk":7,
-      "fields":{
-         "code":"FACILITIES",
-         "name":"Head of Facilities"
-      }
-   },
-   {
-      "model":"field_trips.role",
-      "pk":8,
-      "fields":{
-         "code":"TRANSPORTATION",
-         "name":"Secretary of Transportation"
-      }
-   }
+{
+  "model": "field_trips.role",
+  "pk": 7,
+  "fields": {
+    "code": 0,
+    "building": 2,
+    "discipline": null
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 8,
+  "fields": {
+    "code": 0,
+    "building": 3,
+    "discipline": null
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 9,
+  "fields": {
+    "code": 0,
+    "building": 4,
+    "discipline": null
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 10,
+  "fields": {
+    "code": 0,
+    "building": 5,
+    "discipline": null
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 11,
+  "fields": {
+    "code": 0,
+    "building": 7,
+    "discipline": null
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 12,
+  "fields": {
+    "code": 0,
+    "building": 8,
+    "discipline": null
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 13,
+  "fields": {
+    "code": 0,
+    "building": 1,
+    "discipline": null
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 14,
+  "fields": {
+    "code": 0,
+    "building": 6,
+    "discipline": null
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 15,
+  "fields": {
+    "code": 1,
+    "building": 2,
+    "discipline": null
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 16,
+  "fields": {
+    "code": 1,
+    "building": 3,
+    "discipline": null
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 17,
+  "fields": {
+    "code": 1,
+    "building": 4,
+    "discipline": null
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 18,
+  "fields": {
+    "code": 1,
+    "building": 5,
+    "discipline": null
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 19,
+  "fields": {
+    "code": 1,
+    "building": 7,
+    "discipline": null
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 20,
+  "fields": {
+    "code": 1,
+    "building": 8,
+    "discipline": null
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 21,
+  "fields": {
+    "code": 1,
+    "building": 1,
+    "discipline": null
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 22,
+  "fields": {
+    "code": 1,
+    "building": 6,
+    "discipline": null
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 23,
+  "fields": {
+    "code": 2,
+    "building": null,
+    "discipline": 1
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 24,
+  "fields": {
+    "code": 2,
+    "building": null,
+    "discipline": 2
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 25,
+  "fields": {
+    "code": 2,
+    "building": null,
+    "discipline": 3
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 26,
+  "fields": {
+    "code": 2,
+    "building": null,
+    "discipline": 4
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 27,
+  "fields": {
+    "code": 2,
+    "building": null,
+    "discipline": 5
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 28,
+  "fields": {
+    "code": 2,
+    "building": null,
+    "discipline": 6
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 29,
+  "fields": {
+    "code": 2,
+    "building": null,
+    "discipline": 7
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 30,
+  "fields": {
+    "code": 2,
+    "building": null,
+    "discipline": 8
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 31,
+  "fields": {
+    "code": 2,
+    "building": null,
+    "discipline": 9
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 32,
+  "fields": {
+    "code": 2,
+    "building": null,
+    "discipline": 10
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 33,
+  "fields": {
+    "code": 2,
+    "building": null,
+    "discipline": 11
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 34,
+  "fields": {
+    "code": 2,
+    "building": null,
+    "discipline": 12
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 35,
+  "fields": {
+    "code": 2,
+    "building": null,
+    "discipline": 13
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 36,
+  "fields": {
+    "code": 2,
+    "building": null,
+    "discipline": 14
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 37,
+  "fields": {
+    "code": 2,
+    "building": null,
+    "discipline": 15
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 38,
+  "fields": {
+    "code": 3,
+    "building": null,
+    "discipline": null
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 39,
+  "fields": {
+    "code": 4,
+    "building": null,
+    "discipline": null
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 40,
+  "fields": {
+    "code": 5,
+    "building": null,
+    "discipline": null
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 41,
+  "fields": {
+    "code": 6,
+    "building": null,
+    "discipline": null
+  }
+},
+{
+  "model": "field_trips.role",
+  "pk": 42,
+  "fields": {
+    "code": 7,
+    "building": null,
+    "discipline": null
+  }
+}
 ]

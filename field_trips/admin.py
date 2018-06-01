@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import Chaperone, FieldTrip, Vehicle, Grade, Role, Approver, Building, Approval
+from .models import Chaperone, FieldTrip, Vehicle, Grade, Role, Approver
+from .models import Building, Approval, Discipline
 
 class ApprovalInline(admin.StackedInline):
     readonly_fields = ('timestamp',)
@@ -62,3 +63,4 @@ admin.site.register(Approver)
 admin.site.register(Building)
 admin.site.register(Chaperone)
 admin.site.register(Approval)
+admin.site.register(Discipline)

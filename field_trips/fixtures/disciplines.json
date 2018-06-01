@@ -1,0 +1,107 @@
+[
+    {
+        "model": "field_trips.discipline",
+        "pk": 1,
+        "fields": {
+            "title": "Arts"
+        }
+    },
+    {
+        "model": "field_trips.discipline",
+        "pk": 2,
+        "fields": {
+            "title": "Careers"
+        }
+    },
+    {
+        "model": "field_trips.discipline",
+        "pk": 3,
+        "fields": {
+            "title": "Health and Physical Education"
+        }
+    },
+    {
+        "model": "field_trips.discipline",
+        "pk": 4,
+        "fields": {
+            "title": "Science"
+        }
+    },
+    {
+        "model": "field_trips.discipline",
+        "pk": 5,
+        "fields": {
+            "title": "Social Studies"
+        }
+    },
+    {
+        "model": "field_trips.discipline",
+        "pk": 6,
+        "fields": {
+            "title": "Guidance"
+        }
+    },
+    {
+        "model": "field_trips.discipline",
+        "pk": 7,
+        "fields": {
+            "title": "Mathematics"
+        }
+    },
+    {
+        "model": "field_trips.discipline",
+        "pk": 8,
+        "fields": {
+            "title": "Educational Technology"
+        }
+    },
+    {
+        "model": "field_trips.discipline",
+        "pk": 9,
+        "fields": {
+            "title": "Special Education"
+        }
+    },
+    {
+        "model": "field_trips.discipline",
+        "pk": 10,
+        "fields": {
+            "title": "Grants"
+        }
+    },
+    {
+        "model": "field_trips.discipline",
+        "pk": 11,
+        "fields": {
+            "title": "Testing"
+        }
+    },
+    {
+        "model": "field_trips.discipline",
+        "pk": 12,
+        "fields": {
+            "title": "Special Projects"
+        }
+    },
+    {
+        "model": "field_trips.discipline",
+        "pk": 13,
+        "fields": {
+            "title": "Foreign Language"
+        }
+    },
+    {
+        "model": "field_trips.discipline",
+        "pk": 14,
+        "fields": {
+            "title": "Media"
+        }
+    },
+    {
+        "model": "field_trips.discipline",
+        "pk": 15,
+        "fields": {
+            "title": "Language Arts"
+        }
+    }
+]
