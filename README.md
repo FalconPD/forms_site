@@ -1,5 +1,5 @@
 # forms_site
-Trying to create a django site for district forms
+A django site for district forms
 
 ## Starting a New Database
 ```bash

@@ -71,11 +71,21 @@ class GetCalendarNode(template.Node):
         """
         Create an object in the context with links and a calendar
         """
-        mycal = Calendar(6)
         self.year_val = int(self.year.resolve(context))
         self.month_val = int(self.month.resolve(context))
+        full_cal = Calendar(6).monthdatescalendar(self.year_val, self.month_val)
+        # We only want to see days in our month
+        sparse_cal = []
+        for week in full_cal:
+            new_week = []
+            for day in week:
+                if day.month == self.month_val:
+                    new_week.append(day)
+                else:
+                    new_week.append(None)
+            sparse_cal.append(new_week)
         context[self.var_name] = {
-            'calendar': mycal.monthdatescalendar(self.year_val, self.month_val),
+            'calendar': sparse_cal,
             'title': self.title(self.year_val, self.month_val), 
             'next_link': self.link(*self.next_year_month()),
             'next_title': self.title(*self.next_year_month()),
