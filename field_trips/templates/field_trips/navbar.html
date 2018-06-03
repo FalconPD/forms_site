@@ -19,6 +19,11 @@
         <a class="dropdown-item" href="{% url 'field_trips:approve_index' %}">
             Approve
         </a>
+        {% if request.user|is_admin %}
+        <a class="dropdown-item" href="{% url 'field_trips:admin_index' %}">
+            Admin
+        </a>
+        {% endif %}
         {% endif %}
     </div>
 </li>

@@ -10,4 +10,5 @@ urlpatterns = [
     path('create', views.create, name='create'),
     path('approve', views.approve_index, name='approve_index'),
     path('approve/<int:pk>', views.approve, name='approve'),
+    path('admin', views.admin_index, name='admin_index'),
 ]
