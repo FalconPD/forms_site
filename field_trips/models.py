@@ -326,3 +326,8 @@ class Approval(models.Model):
         if not (self.role in approver.roles.all()):
             return False
         return True
+
+class AdminOptions(models.Model):
+    window_open = models.BooleanField("Accepting requests", default=False)
+    window_start = models.DateTimeField("Window Start")
+    window_end = models.DateTimeField("Window End")

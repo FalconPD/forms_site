@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md"><h2 class="text-center mt-3">Field Trips Admin</h2></div>
+</div>
+
+{% include "field_trips/card.html" with title="Global Options" card_body="field_trips/admin/global_options.html" %}
+{% include "field_trips/card.html" with title="Global Actions" card_body="field_trips/admin/global_actions.html" %}
+
+{% endblock %}

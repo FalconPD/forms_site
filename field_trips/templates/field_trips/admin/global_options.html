@@ -1,0 +1,18 @@
+<form action="{% url 'field_trips:admin_index' %}" method="post">
+    <div class="row">
+        <div class="col-sm">
+            {% include "field_trips/forms/form_group.html" with field=form.window_open %}
+        </div>
+        <div class="col-sm">
+            {% include "field_trips/forms/form_group.html" with field=form.window_start %}
+        </div>
+        <div class="col-sm">
+            {% include "field_trips/forms/form_group.html" with field=form.window_end %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md text-center">
+            <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+    </div>
+</form>

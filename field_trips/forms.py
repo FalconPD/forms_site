@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import FieldTrip, Chaperone, Approver, Approval
+from .models import FieldTrip, Chaperone, Approver, Approval, AdminOptions
 
 DATETIME_FORMAT = "%m/%d/%Y %I:%M %p"
 
@@ -114,3 +114,32 @@ class ChaperoneForm(forms.ModelForm):
     class Meta:
         model = Chaperone
         exclude = ['field_trip']
+
+class AdminOptionsForm(forms.ModelForm):
+    """
+    This is what an admin sees on the top part of the admin page
+    """
+    window_start = forms.DateTimeField(
+        widget=forms.DateInput(format=DATETIME_FORMAT),
+        input_formats=(DATETIME_FORMAT,),
+        help_text="Only accept requests with a departure date AFTER this date"
+    )
+    window_end = forms.DateTimeField(
+        widget=forms.DateInput(format=DATETIME_FORMAT),
+        input_formats=(DATETIME_FORMAT,),
+        help_text="Only accept request with a departure date BEFORE this date"
+    )
+
+    class Meta:
+        model = AdminOptions
+        fields = ['window_open', 'window_start', 'window_end']
+
+class AdminArchiveForm(forms.Form):
+    """
+    This is part of the admin actions card
+    """
+    date = forms.DateTimeField(
+        widget=forms.DateInput(format=DATETIME_FORMAT),
+        input_formats=(DATETIME_FORMAT,),
+        label='Archive all requests older than',
+    )
