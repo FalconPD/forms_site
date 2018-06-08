@@ -9,7 +9,9 @@
 </div>
 
 <div class="row">
-    <div class="col-lg">{% include "field_trips/list.html" with next_view="field_trips:approve" %}</div>
+    <div class="col-lg">
+        {% include "list.html" with fields=fields list=field_trips next_view="field_trips:approve" %}
+    </div>
 </div>
 
 {% endblock %}

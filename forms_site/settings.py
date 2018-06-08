@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.microsoft',
+    'url_tools',
 ]
 
 MIDDLEWARE = [
@@ -72,6 +73,7 @@ TEMPLATES = [
             ],
             'libraries': {
                 'calendar': 'templatetags.calendar',
+                'getattr': 'templatetags.getattr',
             },
         },
     },
@@ -149,5 +151,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'url_tools.context_processors.current_url',
+)
 
 django_heroku.settings(locals())

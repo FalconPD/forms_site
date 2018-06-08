@@ -17,8 +17,10 @@ def index(request):
         .filter(submitter = request.user)
         .order_by(order_by)
     )
-    return render(request, 'field_trips/index.html',
-        {'field_trips': field_trips})
+    return render(request, 'field_trips/index.html', {
+        'field_trips': field_trips,
+        'fields': ['id', 'destination', 'departing', 'submitted'],
+    })
 
 @login_required
 def calendar(request):

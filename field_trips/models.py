@@ -1,8 +1,11 @@
+import inspect
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils import timezone
 
 class Grade(models.Model):
     name = models.CharField(max_length=64)
@@ -94,6 +97,7 @@ class FieldTrip(models.Model):
         (DRAFT, "Draft"),
     )
     status = models.IntegerField(choices=STATUS_CHOICES, default=IN_PROGRESS)
+    log_text = models.TextField(default="")
 
     # General Info
     submitter = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -147,7 +151,11 @@ class FieldTrip(models.Model):
     nurse_name = models.CharField(max_length=64, blank=True)
 
     def __str__(self):
-        return "FieldTrip: destination={}".format(self.destination)
+        return "{} to {} on {}".format(self.group, self.destination,
+            self.departing)
+
+    def log(self, text):
+        self.log_text += "{}: {}\n".format(timezone.now(), text)
 
     def save(self, *args, **kwargs):
         """
@@ -163,13 +171,21 @@ class FieldTrip(models.Model):
     def total(self):
         return self.chaperone_set.count() + self.pupils + self.teachers
 
-    def print_status(self):
-        for choice, text in self.STATUS_CHOICES:
-            if choice == self.status:
+    @classmethod
+    def lookup_status(cls, status):
+        for choice, text in cls.STATUS_CHOICES:
+            if choice == status:
                 return text
         return None
+        
+    def print_status(self):
+        return self.lookup_status(self.status)
+
+    def print_update_source(self):
+        return inspect.getsource(self.update)
 
     def send_approval_request(self, approver):
+        self.log("Sending approval request to {}".format(approver))
         base = 'field_trips/email/approval_request'
         context = {
             'url': reverse('field_trips:approve_index'),
@@ -191,7 +207,7 @@ class FieldTrip(models.Model):
         Creates a new, unsigned approval for a role. Also notifies possible
         approvers via email.
         """
-        print("Creating new approval for {}".format(role))
+        self.log("Creating new approval for {}".format(role))
         Approval(field_trip=self, role=role).save()
 
         for possible_approver in Approver.objects.filter(roles=role).all():
@@ -222,7 +238,7 @@ class FieldTrip(models.Model):
         exception accordingly.
         """
         role = self.lookup_role(role_code, building, discipline)
-        print("Checking approval for {}".format(role))
+        self.log("Checking approval for {}".format(role))
 
         # Find the approvals that meet our criterea
         approvals = self.approval_set.filter(role=role)
@@ -237,14 +253,17 @@ class FieldTrip(models.Model):
 
         # If it is unsigned, raise InProgress
         if approval.approved == None:
+            self.log("Still unsigned")
             raise self.InProgress
 
         # If it is denied, raise Denied
         if approval.approved == False:
+            self.log("Denied by {}".format(approval.approver))
             raise self.Denied
 
         # otherwise it must be approved
         assert(approval.approved)
+        self.log("Approved by {}".format(approval.approver))
 
     def update(self):
         """
@@ -252,6 +271,8 @@ class FieldTrip(models.Model):
         the database. It sets up approvals, notifies approvers, and contains
         the primary logic for how a form is processed
         """
+        self.log("Running update")
+
         # Only check approvals for forms that are active
         if self.status != self.IN_PROGRESS:
             return
@@ -266,14 +287,16 @@ class FieldTrip(models.Model):
             self.check_approval(Role.TRANSPORTATION)
             if self.nurse_required:
                 self.check_approval(Role.PPS)
-            self.check_approval(Role.FIELDTRIP_SECRETARY)
+            self.check_approval(Role.FIELD_TRIP_SECRETARY)
         
             # if we've made it this far, we are approved by everyone
+            self.log("Setting status to APPROVED")
             self.status = self.APPROVED
             return
         except self.InProgress:
             return
         except self.Denied:
+            self.log("Setting status to DENIED")
             self.status = self.DENIED
             return
 
@@ -312,8 +335,7 @@ class Approval(models.Model):
     timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "Approval: role={}, approver={}, approved={}".format(
-            self.role, self.approver, self.approved)
+        return "{} {} {}".format(self.role, self.approver, self.approved)
 
     def can_sign(self, approver):
         """

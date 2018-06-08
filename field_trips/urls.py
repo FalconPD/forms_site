@@ -11,6 +11,8 @@ urlpatterns = [
     path('approve', views.approve_index, name='approve_index'),
     path('approve/<int:pk>', views.approve, name='approve'),
     path('admin', views.admin_index, name='admin_index'),
+    path('admin/<int:pk>', views.admin_detail, name='admin_detail'),
     path('admin/archive', views.admin_archive, name='admin_archive'),
     path('admin/board_report', views.admin_archive, name='admin_board_report'),
+    path('admin/list/<int:status>', views.admin_list, name='admin_list'),
 ]

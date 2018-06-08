@@ -13,7 +13,7 @@ class FieldTripForm(forms.ModelForm):
 class CreateForm(FieldTripForm):
     """
     This is the form someone sees when they create a new field trip request.
-    It hides some fields and correctly populates the supervisor list
+    It hides some fields
     """
 
     # Our date format in the picker is different, so we have to override these
@@ -76,10 +76,11 @@ class AssistantSuperintendentForm(FieldTripForm):
     class Meta(FieldTripForm.Meta):
         fields = ['costs', 'funds', 'anticipatory', 'purpose', 'standards']
 
-class FacilitiesForm(FieldTripForm):
+class TransportationForm(FieldTripForm):
     """
     This is the form facilities sees when a field trip request specifies extra
-    vehicles. They have the ability to adjust the transportation section
+    vehicles or transportation sees. They have the ability to adjust the
+    transportation section
     """
     class Meta(FieldTripForm.Meta):
         fields = ['directions', 'buses', 'extra_vehicles', 'transported_by',
@@ -115,6 +116,31 @@ class ChaperoneForm(forms.ModelForm):
         model = Chaperone
         exclude = ['field_trip']
 
+class AdminForm(FieldTripForm):
+    """
+    This is what an admin sees when they view the details of a field trip
+    from the admin interface
+    """
+
+    # Our date format in the picker is different, so we have to override these
+    # to specify it
+    departing = forms.DateTimeField(
+        widget=forms.DateInput(format=DATETIME_FORMAT),
+        input_formats=(DATETIME_FORMAT,)
+    )
+    returning = forms.DateTimeField(
+        widget=forms.DateInput(format=DATETIME_FORMAT),
+        input_formats=(DATETIME_FORMAT,)
+    )
+
+    class Meta(FieldTripForm.Meta):
+        fields = ['submitter', 'destination', 'group', 'grades', 'building',
+            'roster', 'itinerary', 'pupils', 'teachers', 'departing',
+            'returning', 'directions', 'buses', 'extra_vehicles',
+            'transported_by', 'transportation_comments', 'costs', 'funds',
+            'discipline', 'standards', 'anticipatory', 'purpose',
+            'nurse_required', 'nurse_comments', 'nurse_name', 'status']
+
 class AdminOptionsForm(forms.ModelForm):
     """
     This is what an admin sees on the top part of the admin page
@@ -143,3 +169,15 @@ class AdminArchiveForm(forms.Form):
         input_formats=(DATETIME_FORMAT,),
         label='Archive all requests older than',
     )
+
+class AdminApprovalForm(forms.ModelForm):
+    """
+    This is what an admin sees in the card showing a list of approvals
+    """
+    class Meta:
+        model = Approval
+        fields = ['role', 'approver', 'approved', 'comments']
+        widgets = {
+            # take up less space in the table
+            'comments': forms.Textarea(attrs={'rows': 2}),
+        }

@@ -1,0 +1,28 @@
+<div class="row">
+    <div class="col-sm">
+        {% include "field_trips/forms/form_group.html" with field=form.submitter %}
+    </div>
+    <div class="col-sm">
+        {% include "field_trips/forms/form_group.html" with field=form.status %}
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg">
+        <label> <a href="#log" data-toggle="collapse">Log:</a></label>        
+        <div class="collapse" id="log">
+            <pre><samp>{{ form.instance.log_text }}</pre></samp>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg">
+        <label>
+            <a href="#source" data-toggle="collapse">
+                Update Function Source Code:
+            </a>
+        </label>
+        <div class="collapse" id="source">
+            <pre><code>{{ form.instance.print_update_source }}</code></pre>
+        </div>
+    </div>
+</div>

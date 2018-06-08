@@ -1,0 +1,26 @@
+{{ approvals.management_form }}
+
+<div class="table-responsive">
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Role:</th>
+                <th>Approver:</th>
+                <th>Approved:</th>
+                <th>Comments:</th>
+                <th>Timestamp:</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for approval in approvals %}
+            <tr class="approvals">
+                {% include "field_trips/forms/table_data.html" with field=approval.role %}
+                {% include "field_trips/forms/table_data.html" with field=approval.approver %}
+                {% include "field_trips/forms/table_data.html" with field=approval.approved %}
+                {% include "field_trips/forms/table_data.html" with field=approval.comments %}
+                <td><div>{{ approval.instance.timestamp }}</div></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

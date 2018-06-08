@@ -1,0 +1,13 @@
+<ul class="list-unstyled">
+    <li>
+        Field Trips by Status
+        <ul>
+            {% for status, text in FieldTrip.STATUS_CHOICES %}
+            <li>
+                <a href={% url "field_trips:admin_list" status %}>
+                    {{ text }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+</ul>

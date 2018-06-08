@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block head %}
+
+<link
+    rel="stylesheet"
+    type="text/css"
+    href="{% static 'field_trips/cards.css' %}">
+</link>
+<script src="{% static "field_trips/setup_datetime.js" %}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md"><h2 class="text-center mt-3">Field Trips Admin</h2></div>
+</div>
+
+{% include "field_trips/card.html" with title="Options" card_body="field_trips/admin/options.html" %}
+{% include "field_trips/card.html" with title="Actions" card_body="field_trips/admin/actions.html" %}
+{% include "field_trips/card.html" with title="Views" card_body="field_trips/admin/views.html" %}
+
+{% endblock %}

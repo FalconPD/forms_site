@@ -3,12 +3,13 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse
+from django.core.paginator import Paginator
 
 from field_trips.forms import NurseForm, ApprovalForm, PrincipalForm
 from field_trips.forms import SupervisorForm, AssistantSuperintendentForm
-from field_trips.forms import FacilitiesForm, FieldTripSecretaryForm
+from field_trips.forms import TransportationForm, FieldTripSecretaryForm
 from field_trips.models import FieldTrip, Approver, Role
-from .constants import DISPLAYS, FORMS
+from .constants import DISPLAYS, FORMS, ITEMS_PER_PAGE, DIRECTIONS
 
 @login_required
 def approve(request, pk):
@@ -27,12 +28,11 @@ def approve(request, pk):
     if not approval:
         raise PermissionDenied
 
-    directions_dir = 'field_trips/approve/directions/'
     view_setup = {
         Role.NURSE: (
             "Nurse Approval",
             [
-                ("Directions", directions_dir +'nurse.html'),
+                ("Directions", DIRECTIONS +'nurse.html'),
                 ("General Information", DISPLAYS + 'general.html'),
                 ("Nurse", FORMS + 'nurse.html'),
             ],
@@ -41,7 +41,7 @@ def approve(request, pk):
         Role.PRINCIPAL: (
             "Principal Approval",
             [
-                ("Directions", directions_dir + 'principal.html'),
+                ("Directions", DIRECTIONS + 'principal.html'),
                 ("General Information", DISPLAYS + 'general.html'),
                 ("Funding", FORMS + 'funding.html'),
             ],
@@ -50,7 +50,7 @@ def approve(request, pk):
         Role.SUPERVISOR: (
             "Supervisor Approval",
             [
-                ("Directions", directions_dir + 'supervisor.html'),
+                ("Directions", DIRECTIONS + 'supervisor.html'),
                 ("General Information", DISPLAYS + 'general.html'),
                 ("Curriculum", FORMS + 'curriculum.html'),
             ],
@@ -59,7 +59,7 @@ def approve(request, pk):
         Role.ASSISTANT_SUPERINTENDENT: (
             "Assistant Superintendent Approval",
             [
-                ("Directions",directions_dir + 'assistant_superintendent.html'),
+                ("Directions",DIRECTIONS + 'assistant_superintendent.html'),
                 ("General Information", DISPLAYS + 'general.html'),
                 ("Transportation", DISPLAYS + 'transportation.html'),
                 ("Funding", FORMS + 'funding.html'),
@@ -71,25 +71,34 @@ def approve(request, pk):
         Role.FACILITIES: (
             "Facilities Approval",
             [
-                ("Directions", directions_dir + 'facilities.html'),
+                ("Directions", DIRECTIONS + 'facilities.html'),
                 ("General Information", DISPLAYS + 'general.html'),
                 ("Transportation", FORMS + 'transportation.html'),
             ],
-            FacilitiesForm,
+            TransportationForm,
         ),
         Role.PPS: (
             "Pupil Personnel Services",
             [
-                ("Directions", directions_dir + 'pps.html'),
+                ("Directions", DIRECTIONS + 'pps.html'),
                 ("General Information", DISPLAYS + 'general.html'),
                 ("Nurse", FORMS + 'nurse.html'),
             ],
             NurseForm,
         ),
+        Role.TRANSPORTATION: (
+            "Transportation Secretary",
+            [
+                ("Directions", DIRECTIONS + 'transportation.html'),
+                ("General Information", DISPLAYS + 'general.html'),
+                ("Transportation", FORMS + 'transportation.html'),
+            ],
+            TransportationForm,
+        ),
         Role.FIELD_TRIP_SECRETARY: (
             "Field Trip Secretary",
             [
-                ("Directions", directions_dir + 'field_trip_secretary.html'),
+                ("Directions", DIRECTIONS + 'field_trip_secretary.html'),
             ],
             FieldTripSecretaryForm,
         ),
@@ -138,14 +147,17 @@ def approve_index(request):
     they could approve
     """
     approver = Approver.objects.filter(email__iexact=request.user.email).first()
-    
     if not approver:
         raise PermissionDenied
 
-    field_trips = []
+    field_trip_list = []
     for field_trip in FieldTrip.objects.filter(status=FieldTrip.IN_PROGRESS):
         if field_trip.first_needed_approval_for_approver(approver):
-            field_trips.append(field_trip)
-
-    return render(request, 'field_trips/approve/index.html',
-        {'field_trips': field_trips})
+            field_trip_list.append(field_trip)
+    paginator = Paginator(field_trip_list, ITEMS_PER_PAGE)
+    page = request.GET.get('page')
+    field_trips = paginator.get_page(page)
+    return render(request, 'field_trips/approve/index.html', {
+        'field_trips': field_trips,
+        'fields': ['id', 'destination', 'departing', 'submitted', 'submitter'],
+    })
