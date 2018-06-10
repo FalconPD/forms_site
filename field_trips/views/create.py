@@ -1,16 +1,22 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from django.forms.models import modelformset_factory
+from django.shortcuts import render, redirect, HttpResponse
+from django.forms.models import inlineformset_factory
 from django.urls import reverse
 
-from field_trips.forms import CreateForm, ChaperoneForm, Chaperone
+from field_trips.forms import CreateForm, ChaperoneForm
+from field_trips.models import FieldTrip, Chaperone, AdminOption
 from .constants import FORMS
 
 @login_required
 def create(request):
     """
     Creates a view that allows ANY logged in user to submit a field trip request
+    but checks to make sure the admin is accepting requests first.
     """
+    admin_option = AdminOption.objects.get()
+    if not admin_option.window_open:
+        return HttpResponse("New field trip requests have been disabled.")
+
     title = "Submit a Field Trip Request"
     cards = (
         ("General Information", FORMS + 'general.html'),
@@ -18,26 +24,18 @@ def create(request):
         ("Funding", FORMS + 'funding.html'),
         ("Curriculum", FORMS + 'curriculum.html'),
     )
-    ChaperoneFormFactory = modelformset_factory(Chaperone, form=ChaperoneForm,
-        extra=1)
+    ChaperoneFormSet = inlineformset_factory(FieldTrip, Chaperone, extra=1,
+        form=ChaperoneForm)
     if request.method == 'POST':
-        form = CreateForm(request.POST, request.FILES)
-        chaperones = ChaperoneFormFactory(request.POST, prefix='chaperones')
+        field_trip = FieldTrip(submitter=request.user)
+        form = CreateForm(request.POST, request.FILES, instance=field_trip)
+        chaperones = ChaperoneFormSet(request.POST, instance=field_trip)
         if form.is_valid() and chaperones.is_valid():
-            # Create the field trip and save the submitter
-            field_trip = form.save(commit=False) 
-            field_trip.submitter = request.user
-            field_trip.save()
-            form.save_m2m() # needed due to commit=False
-            # Save all the chaperones (has to be done AFTER the field trip)
-            chaperone_set = chaperones.save(commit=False)
-            for chaperone in chaperone_set:
-                chaperone.field_trip = field_trip
-                chaperone.save()
+            form.save()
+            chaperones.save()
             return redirect('field_trips:index')
     else:
-        chaperones = ChaperoneFormFactory(queryset=Chaperone.objects.none(),
-            prefix='chaperones')
+        chaperones = ChaperoneFormSet()
         form = CreateForm()
     return render(request, 'field_trips/show_cards.html', {
         'title': title,

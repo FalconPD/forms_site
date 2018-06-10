@@ -53,3 +53,10 @@
         {% include "field_trips/forms/form_group.html" with field=form.itinerary %}
     </div>
 </div>
+
+<script>
+    $("#id_departing").datetimepicker({
+        minDateTime: new Date("{{ admin_option.window_start.isoformat }}"),
+        maxDateTime: new Date("{{ admin_option.window_end.isoformat }}")
+    })
+</script>

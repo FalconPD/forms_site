@@ -1,6 +1,7 @@
 from django import forms
+from django.utils import timezone
 
-from .models import FieldTrip, Chaperone, Approver, Approval, AdminOptions
+from .models import FieldTrip, Chaperone, Approver, Approval, AdminOption
 
 DATETIME_FORMAT = "%m/%d/%Y %I:%M %p"
 
@@ -32,6 +33,21 @@ class CreateForm(FieldTripForm):
             'pupils', 'teachers', 'departing', 'returning', 'directions',
             'buses', 'extra_vehicles', 'costs', 'funds', 'anticipatory',
             'purpose', 'standards', 'building', 'discipline']
+
+    # This makes sure the departure is withing the departure window set by the
+    # admin
+    def clean_departing(self):
+        admin_option = AdminOption.objects.get()
+        start = admin_option.window_start
+        end = admin_option.window_end
+        departing = self.cleaned_data['departing']
+        if departing > end or departing < start:
+            raise forms.ValidationError(
+                "Departure must be between {} and {}".format(
+                    timezone.localtime(start).strftime(DATETIME_FORMAT),
+                    timezone.localtime(end).strftime(DATETIME_FORMAT))
+            )
+        return departing
 
 class NurseForm(FieldTripForm):
     """
@@ -141,7 +157,7 @@ class AdminForm(FieldTripForm):
             'discipline', 'standards', 'anticipatory', 'purpose',
             'nurse_required', 'nurse_comments', 'nurse_name', 'status']
 
-class AdminOptionsForm(forms.ModelForm):
+class AdminOptionForm(forms.ModelForm):
     """
     This is what an admin sees on the top part of the admin page
     """
@@ -157,7 +173,7 @@ class AdminOptionsForm(forms.ModelForm):
     )
 
     class Meta:
-        model = AdminOptions
+        model = AdminOption
         fields = ['window_open', 'window_start', 'window_end']
 
 class AdminArchiveForm(forms.Form):

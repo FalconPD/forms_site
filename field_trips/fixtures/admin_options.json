@@ -1,0 +1,11 @@
+[
+{
+  "model": "field_trips.adminoption",
+  "pk": 1,
+  "fields": {
+    "window_open": true,
+    "window_start": "2017-09-01T04:00:00Z",
+    "window_end": "2018-06-30T04:00:00Z"
+  }
+}
+]

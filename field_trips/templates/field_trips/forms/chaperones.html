@@ -3,6 +3,8 @@
 <table class="table">
     <thead>
         <tr>
+            <th class="d-none">ID:</th>
+            <th class="d-none">Delete:</th>
             <th>Chaperone Name:</th>
             <th>Phone Number:</th>
         </tr>
@@ -10,9 +12,24 @@
     <tbody>
         {% for chaperone in chaperones %}
             <tr class="chaperones">
+                <td class="d-none">{{ chaperone.id }}</td>
+                <td class="d-none">
+                {% if chaperones.can_delete %}
+                    {{ chaperone.DELETE }}
+                {% endif %}
+                </td>
                 {% include "field_trips/forms/table_data.html" with field=chaperone.name %}
                 {% include "field_trips/forms/table_data.html" with field=chaperone.phone_number %}
             </tr>
         {% endfor %}
     </tbody>
 </table>
+
+<script>
+    $( function() {
+        $( ".chaperones" ).formset({
+            prefix: 'chaperone_set',
+            formCssClass: 'dynamic-chaperones'
+        });
+    })
+</script>

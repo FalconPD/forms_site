@@ -3,11 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
-from django.forms.models import modelformset_factory
+from django.forms.models import inlineformset_factory
+from django.urls import reverse
 
 from field_trips.utils import is_admin
-from field_trips.models import FieldTrip, Chaperone, Approval
-from field_trips.forms import AdminOptionsForm, AdminArchiveForm, AdminForm
+from field_trips.models import FieldTrip, Chaperone, Approval, AdminOption
+from field_trips.forms import AdminOptionForm, AdminArchiveForm, AdminForm
 from field_trips.forms import ChaperoneForm, AdminApprovalForm
 from field_trips.views.constants import ITEMS_PER_PAGE, DISPLAYS, FORMS
 
@@ -20,14 +21,14 @@ def admin_index(request):
     if not is_admin(request.user):
         raise PermissionDenied
 
+    admin_options = AdminOption.objects.get()
     if request.method == 'POST':
-        #FIXME: Unimplemented
-        form = CreateForm(request.POST)
+        form = AdminOptionForm(request.POST, instance=admin_options)
         if form.is_valid():
             form.save()
             return redirect('field_trips:admin_index')
     else:
-        form = AdminOptionsForm()
+        form = AdminOptionForm(instance=admin_options)
         archive_form = AdminArchiveForm()
         active_requests = FieldTrip.objects.filter(
             status=FieldTrip.IN_PROGRESS).all()
@@ -46,13 +47,34 @@ def admin_board_report(request):
 @login_required
 def admin_detail(request, pk):
     """
-    Make sure the user is an admin and then present them with the admin form
-    for editing basically all parts of a field trip
+    An admin view of ONE particular field trip. Allows the admin to edit
+    everything (within reason) and displays some internal model features as
+    well
     """
     if not is_admin(request.user):
         raise PermissionDenied
 
     field_trip = get_object_or_404(FieldTrip, pk=pk)
+    admin_option = AdminOption.objects.get()
+
+    ChaperoneFormSet = inlineformset_factory(FieldTrip, Chaperone, extra=0,
+        form=ChaperoneForm)
+    ApprovalFormSet = inlineformset_factory(FieldTrip, Approval, extra=0,
+        form=AdminApprovalForm)
+
+    if request.method == 'POST':
+        form = AdminForm(request.POST, request.FILES, instance=field_trip)
+        chaperones = ChaperoneFormSet(request.POST, instance=field_trip)
+        approvals = ApprovalFormSet(request.POST, instance=field_trip)
+        if form.is_valid() and chaperones.is_valid() and approvals.is_valid():
+            form.save()
+            chaperones.save()
+            approvals.save()
+            return redirect('field_trips:admin_index')
+    else:
+        form = AdminForm(instance=field_trip)
+        chaperones = ChaperoneFormSet(instance=field_trip)
+        approvals = ApprovalFormSet(instance=field_trip)
     title = "Editing Field Trip #{}".format(pk)
     cards = (
         ("General Information", FORMS + 'general.html'),
@@ -63,15 +85,6 @@ def admin_detail(request, pk):
         ("Approvals", FORMS + 'approvals.html'),
         ("Internals", FORMS + 'internals.html'),
     )
-    form = AdminForm(instance=field_trip)
-    ChaperoneFormFactory = modelformset_factory(Chaperone, form=ChaperoneForm,
-        extra=0)
-    chaperones = ChaperoneFormFactory(prefix='chaperones',
-        queryset=Chaperone.objects.filter(field_trip=field_trip))
-    ApprovalFormFactory = modelformset_factory(Approval, form=AdminApprovalForm,
-        extra=0, )
-    approvals = ApprovalFormFactory(prefix='approvals',
-        queryset=Approval.objects.filter(field_trip=field_trip))
     return render(request, 'field_trips/show_cards.html', {
         'cards': cards,
         'field_trip': field_trip,
@@ -79,6 +92,9 @@ def admin_detail(request, pk):
         'form': form,
         'chaperones': chaperones,
         'approvals': approvals,
+        'enctype': "multipart/form-data",
+        'action': reverse('field_trips:admin_detail', args=[pk]),
+        'admin_option': admin_option,
     })
 
 @login_required

@@ -4,6 +4,8 @@
     <table class="table table-sm">
         <thead>
             <tr>
+                <th class="d-none">ID:</th>
+                <th class="d-none">Delete:</th>
                 <th>Role:</th>
                 <th>Approver:</th>
                 <th>Approved:</th>
@@ -14,6 +16,12 @@
         <tbody>
         {% for approval in approvals %}
             <tr class="approvals">
+                <td class="d-none">{{ approval.id }}</td>
+                <td class="d-none">
+                {% if approvals.can_delete %}
+                    {{ approval.DELETE }}
+                {% endif %}
+                </td>
                 {% include "field_trips/forms/table_data.html" with field=approval.role %}
                 {% include "field_trips/forms/table_data.html" with field=approval.approver %}
                 {% include "field_trips/forms/table_data.html" with field=approval.approved %}
@@ -24,3 +32,12 @@
         </tbody>
     </table>
 </div>
+
+<script>
+    $( function() {
+        $( ".approvals" ).formset({
+            prefix: 'approval_set',
+            formCssClass: 'dynamic-approvals'
+        });
+    })
+</script>

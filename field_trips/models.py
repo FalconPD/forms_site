@@ -349,7 +349,7 @@ class Approval(models.Model):
             return False
         return True
 
-class AdminOptions(models.Model):
+class AdminOption(models.Model):
     window_open = models.BooleanField("Accepting requests", default=False)
     window_start = models.DateTimeField("Window Start")
     window_end = models.DateTimeField("Window End")

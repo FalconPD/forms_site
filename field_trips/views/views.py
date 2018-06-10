@@ -5,18 +5,23 @@ from django.contrib.auth.decorators import login_required
 from django.db.models.functions import Lower
 from django.utils import timezone
 from django.urls import reverse
+from django.core.paginator import Paginator
 
 from field_trips.models import FieldTrip
-from .constants import DISPLAYS
+from .constants import DISPLAYS, ITEMS_PER_PAGE
 
 @login_required
 def index(request):
     order_by = request.GET.get('order_by', 'id')
-    field_trips = (FieldTrip
+    field_trips_list = (FieldTrip
         .objects
         .filter(submitter = request.user)
         .order_by(order_by)
+        .all()
     )
+    paginator = Paginator(field_trips_list, ITEMS_PER_PAGE)
+    page = request.GET.get('page')
+    field_trips = paginator.get_page(page)
     return render(request, 'field_trips/index.html', {
         'field_trips': field_trips,
         'fields': ['id', 'destination', 'departing', 'submitted'],
