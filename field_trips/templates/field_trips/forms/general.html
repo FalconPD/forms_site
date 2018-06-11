@@ -19,6 +19,7 @@
     </div>
     <div class="col-sm">
         {% include "field_trips/forms/form_group.html" with field=form.departing %}
+        <small id="departing_warning" class="bg-warning"></small>
         <a href={% url 'field_trips:calendar' %} target="_blank">
             <small class="form-text text-muted">
                 Click here to check the calendar for conflicting trips
@@ -55,8 +56,27 @@
 </div>
 
 <script>
-    $("#id_departing").datetimepicker({
+    fieldTrips = {{ other_dates|safe }};
+    fieldTripDates = fieldTrips.map(function(fieldTrip) {
+        return new Date(fieldTrip["fields"]["departing"]).setHours(0,0,0,0);
+    });
+    departing = $("#id_departing")
+    departing.datetimepicker({
         minDateTime: new Date("{{ admin_option.window_start.isoformat }}"),
-        maxDateTime: new Date("{{ admin_option.window_end.isoformat }}")
-    })
+        maxDateTime: new Date("{{ admin_option.window_end.isoformat }}"),
+        controlType: 'select',
+        onLine: true,
+        timeFormat: 'hh:mm tt'
+    });
+    departing.change(function(myEvent) {
+        dateToCheck = new Date(departing.val()).setHours(0,0,0,0);
+        conflicts = fieldTripDates.reduce(function(total, fieldTripDate) {
+            if (dateToCheck == fieldTripDate) {
+                return total += 1;
+            } else {
+                return total;
+            }
+        }, 0);
+        $("#departing_warning").text("There are " + conflicts + " other field trips on this date. Nurses/Buses may not be available");
+    });
 </script>

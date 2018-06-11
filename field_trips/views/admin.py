@@ -1,3 +1,5 @@
+import json
+
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -5,6 +7,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.forms.models import inlineformset_factory
 from django.urls import reverse
+from django.core import serializers
 
 from field_trips.utils import is_admin
 from field_trips.models import FieldTrip, Chaperone, Approval, AdminOption
@@ -56,6 +59,12 @@ def admin_detail(request, pk):
 
     field_trip = get_object_or_404(FieldTrip, pk=pk)
     admin_option = AdminOption.objects.get()
+    other_trips = (FieldTrip
+        .objects
+        .filter(status__in=(FieldTrip.APPROVED, FieldTrip.IN_PROGRESS))
+        .all()
+    )
+    other_dates = serializers.serialize('json', other_trips, fields='departing')
 
     ChaperoneFormSet = inlineformset_factory(FieldTrip, Chaperone, extra=0,
         form=ChaperoneForm)
@@ -95,6 +104,7 @@ def admin_detail(request, pk):
         'enctype': "multipart/form-data",
         'action': reverse('field_trips:admin_detail', args=[pk]),
         'admin_option': admin_option,
+        'other_dates': other_dates,
     })
 
 @login_required
