@@ -13,6 +13,9 @@ django-allauth = "*"
 gunicorn = "*"
 django-heroku = "*"
 "psycopg2" = "*"
+dotenv-python = "*"
+django-storages = "*"
+"boto3" = "*"
 
 
 [dev-packages]
