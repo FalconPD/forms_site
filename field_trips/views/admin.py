@@ -1,17 +1,14 @@
-import json
-
-from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.forms.models import inlineformset_factory
 from django.urls import reverse
-from django.core import serializers
+from django.http import HttpResponse, HttpResponseBadRequest
 
 from field_trips.utils import is_admin
 from field_trips.models import FieldTrip, Chaperone, Approval, AdminOption
-from field_trips.forms import AdminOptionForm, AdminArchiveForm, AdminForm
+from field_trips.forms import AdminOptionForm, AdminActionForm, AdminForm
 from field_trips.forms import ChaperoneForm, AdminApprovalForm
 from field_trips.views.constants import ITEMS_PER_PAGE, DISPLAYS, FORMS
 
@@ -24,28 +21,54 @@ def admin_index(request):
     if not is_admin(request.user):
         raise PermissionDenied
 
-    admin_options = AdminOption.objects.get()
+    admin_option = AdminOption.objects.get()
     if request.method == 'POST':
-        form = AdminOptionForm(request.POST, instance=admin_options)
-        if form.is_valid():
-            form.save()
+        option_form = AdminOptionForm(request.POST, instance=admin_option)
+        if option_form.is_valid():
+            option_form.save()
             return redirect('field_trips:admin_index')
     else:
-        form = AdminOptionForm(instance=admin_options)
-        archive_form = AdminArchiveForm()
-        active_requests = FieldTrip.objects.filter(
-            status=FieldTrip.IN_PROGRESS).all()
-        return render(request, 'field_trips/admin/index.html', {
-            'form': form,
-            'archive_form': archive_form,
-            'FieldTrip': FieldTrip,
-        })
+        option_form = AdminOptionForm(instance=admin_option)
+        action_form = AdminActionForm()
 
-def admin_archive(request):
-    return HttpResponse("Work in Progress")
+    status_text_count = []
+    for status, text in FieldTrip.STATUS_CHOICES:
+        count = FieldTrip.objects.filter(status=status).count()
+        if count != 0:
+            status_text_count.append((status, text, count))
+    return render(request, 'field_trips/admin/index.html', {
+        'option_form': option_form,
+        'action_form': action_form,
+        'status_text_count': status_text_count,
+    })
 
-def admin_board_report(request):
-    return HttpResponse("Work in Progress")
+@login_required
+def admin_action(request):
+    """
+    Performs different admin actions based on what the user has checked
+    """
+    if not is_admin(request.user):
+        raise PermissionDenied
+
+    if request.method != "POST":
+        return HttpResponseBadRequest("This URL only accepts POST data")
+
+    action_form = AdminActionForm(request.POST)
+    if action_form.is_valid():
+        data = action_form.cleaned_data
+        if data['archive']:
+            field_trips = (FieldTrip
+                .objects
+                .exclude(status=FieldTrip.ARCHIVED)
+                .filter(departing__lt=data['date'])
+                .all()
+            )
+            for field_trip in field_trips:
+                field_trip.status = FieldTrip.ARCHIVED
+                field_trip.save()
+        return HttpResponse("Actions completed successfully")
+    else:
+        return HttpResponseBadRequest("Invalid parameters")
 
 @login_required
 def admin_detail(request, pk):
@@ -59,12 +82,6 @@ def admin_detail(request, pk):
 
     field_trip = get_object_or_404(FieldTrip, pk=pk)
     admin_option = AdminOption.objects.get()
-    other_trips = (FieldTrip
-        .objects
-        .filter(status__in=(FieldTrip.APPROVED, FieldTrip.IN_PROGRESS))
-        .all()
-    )
-    other_dates = serializers.serialize('json', other_trips, fields='departing')
 
     ChaperoneFormSet = inlineformset_factory(FieldTrip, Chaperone, extra=0,
         form=ChaperoneForm)
@@ -104,7 +121,6 @@ def admin_detail(request, pk):
         'enctype': "multipart/form-data",
         'action': reverse('field_trips:admin_detail', args=[pk]),
         'admin_option': admin_option,
-        'other_dates': other_dates,
     })
 
 @login_required

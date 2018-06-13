@@ -43,5 +43,6 @@ def create(request):
         'form': form,
         'chaperones': chaperones,
         'enctype': "multipart/form-data",
-        'action': reverse('field_trips:create')
+        'action': reverse('field_trips:create'),
+        'admin_option': admin_option,
     })

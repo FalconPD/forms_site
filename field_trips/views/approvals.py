@@ -78,7 +78,7 @@ def approve(request, pk):
             TransportationForm,
         ),
         Role.PPS: (
-            "Pupil Personnel Services",
+            "Pupil Personnel Services Approval",
             [
                 ("Directions", DIRECTIONS + 'pps.html'),
                 ("General Information", DISPLAYS + 'general.html'),
@@ -87,7 +87,7 @@ def approve(request, pk):
             NurseForm,
         ),
         Role.TRANSPORTATION: (
-            "Transportation Secretary",
+            "Transportation Secretary Approval",
             [
                 ("Directions", DIRECTIONS + 'transportation.html'),
                 ("General Information", DISPLAYS + 'general.html'),
@@ -96,9 +96,14 @@ def approve(request, pk):
             TransportationForm,
         ),
         Role.FIELD_TRIP_SECRETARY: (
-            "Field Trip Secretary",
+            "Field Trip Secretary Approval",
             [
                 ("Directions", DIRECTIONS + 'field_trip_secretary.html'),
+                ("General Information", DISPLAYS + 'general.html'),
+                ("Transportation", DISPLAYS + 'transportation.html'),
+                ("Funding", DISPLAYS + 'funding.html'),
+                ("Curriculum", DISPLAYS + 'curriculum.html'),
+                ("Nurse", DISPLAYS + 'nurse.html'),
             ],
             FieldTripSecretaryForm,
         ),
@@ -150,8 +155,15 @@ def approve_index(request):
     if not approver:
         raise PermissionDenied
 
+    order_by = request.GET.get('order_by', 'id')
+    query = (FieldTrip
+        .objects
+        .filter(status=FieldTrip.IN_PROGRESS)
+        .order_by(order_by)
+        .all()
+    )
     field_trip_list = []
-    for field_trip in FieldTrip.objects.filter(status=FieldTrip.IN_PROGRESS):
+    for field_trip in query:
         if field_trip.first_needed_approval_for_approver(approver):
             field_trip_list.append(field_trip)
     paginator = Paginator(field_trip_list, ITEMS_PER_PAGE)

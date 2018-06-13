@@ -1,13 +1,14 @@
 <ul class="list-unstyled">
     <li>
-        Field Trips by Status
+        Field Trip Requests by Status
         <ul>
-            {% for status, text in FieldTrip.STATUS_CHOICES %}
+            {% for status, text, count in status_text_count %}
             <li>
                 <a href={% url "field_trips:admin_list" status %}>
-                    {{ text }}
+                    {{ text }} ({{ count }})
                 </a>
             </li>
             {% endfor %}
         </ul>
+    </li>
 </ul>

@@ -7,6 +7,8 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 
+from forms_site.storage_backends import PrivateMediaStorage
+
 class Grade(models.Model):
     name = models.CharField(max_length=64)
     code = models.CharField(max_length=8)
@@ -88,6 +90,7 @@ class FieldTrip(models.Model):
     DENIED = 3
     DROPPED = 4
     DRAFT = 5
+    PENDING = 6
     STATUS_CHOICES = (
         (ARCHIVED, "Archived"),
         (IN_PROGRESS, "In Progress"),
@@ -95,6 +98,7 @@ class FieldTrip(models.Model):
         (DENIED, "Denied"),
         (DROPPED, "Dropped"),
         (DRAFT, "Draft"),
+        (PENDING, "Pending Board Approval"),
     )
     status = models.IntegerField(choices=STATUS_CHOICES, default=IN_PROGRESS)
     log_text = models.TextField(default="")
@@ -106,7 +110,8 @@ class FieldTrip(models.Model):
     group = models.CharField("Class / Group / Club", max_length=64)
     grades = models.ManyToManyField(Grade)
     building = models.ForeignKey(Building, on_delete=models.CASCADE)
-    roster = models.FileField(upload_to="field_trips/")
+    roster = models.FileField(upload_to="field_trips/",
+        storage=PrivateMediaStorage())
     itinerary = models.TextField(help_text=
         ("Please include time at destination, lunch arrangements, and "
          "additional stops."))
@@ -116,7 +121,8 @@ class FieldTrip(models.Model):
     returning = models.DateTimeField("Date and Time Returning to School")
 
     # Transportation
-    directions = models.FileField(upload_to="field_trips/")
+    directions = models.FileField(upload_to="field_trips/",
+        storage=PrivateMediaStorage())
     buses = models.IntegerField("Number of Buses Required", help_text="Each bus seats 52 people.")
     extra_vehicles = models.ManyToManyField(Vehicle, blank=True,
         verbose_name="Additional Vehicles Required")
@@ -177,7 +183,7 @@ class FieldTrip(models.Model):
             if choice == status:
                 return text
         return None
-        
+
     def print_status(self):
         return self.lookup_status(self.status)
 
@@ -289,9 +295,9 @@ class FieldTrip(models.Model):
                 self.check_approval(Role.PPS)
             self.check_approval(Role.FIELD_TRIP_SECRETARY)
         
-            # if we've made it this far, we are approved by everyone
-            self.log("Setting status to APPROVED")
-            self.status = self.APPROVED
+            # if we've made it this far, we are just waiting on board approval
+            self.log("Setting status to PENDING")
+            self.status = self.PENDING
             return
         except self.InProgress:
             return

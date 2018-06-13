@@ -2,13 +2,13 @@
     {% csrf_token %}
     <div class="row">
         <div class="col-2">
-            {% include "field_trips/forms/form_group.html" with field=form.window_open %}
+            {% include "field_trips/forms/form_group.html" with field=option_form.window_open %}
         </div>
         <div class="col-sm">
-            {% include "field_trips/forms/form_group.html" with field=form.window_start %}
+            {% include "field_trips/forms/form_group.html" with field=option_form.window_start %}
         </div>
         <div class="col-sm">
-            {% include "field_trips/forms/form_group.html" with field=form.window_end %}
+            {% include "field_trips/forms/form_group.html" with field=option_form.window_end %}
         </div>
     </div>
     <div class="row">

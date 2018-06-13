@@ -108,7 +108,7 @@ class FieldTripSecretaryForm(FieldTripForm):
     a field trip. The next step is board approval
     """
     class Meta(FieldTripForm.Meta):
-        fields = ['destination']
+        fields = []
 
 class ApprovalForm(forms.ModelForm):
     """
@@ -176,14 +176,15 @@ class AdminOptionForm(forms.ModelForm):
         model = AdminOption
         fields = ['window_open', 'window_start', 'window_end']
 
-class AdminArchiveForm(forms.Form):
+class AdminActionForm(forms.Form):
     """
     This is part of the admin actions card
     """
+    archive = forms.BooleanField()
     date = forms.DateTimeField(
         widget=forms.DateInput(format=DATETIME_FORMAT),
         input_formats=(DATETIME_FORMAT,),
-        label='Archive all requests older than',
+        label='Requests older than',
     )
 
 class AdminApprovalForm(forms.ModelForm):
@@ -197,3 +198,4 @@ class AdminApprovalForm(forms.ModelForm):
             # take up less space in the table
             'comments': forms.Textarea(attrs={'rows': 2}),
         }
+

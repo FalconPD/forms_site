@@ -12,17 +12,32 @@ from .constants import DISPLAYS, ITEMS_PER_PAGE
 
 @login_required
 def index(request):
+    field_trips = FieldTrip.objects.filter(submitter=request.user)
+    status_text_count = []
+    for status, text in FieldTrip.STATUS_CHOICES:
+        count = field_trips.filter(status=status).count()
+        if count != 0:
+            status_text_count.append((status, text, count))
+    return render(request, 'field_trips/index.html', {
+        'status_text_count': status_text_count,
+    })
+
+@login_required
+def list(request, status):
     order_by = request.GET.get('order_by', 'id')
     field_trips_list = (FieldTrip
         .objects
         .filter(submitter = request.user)
+        .filter(status = status)
         .order_by(order_by)
         .all()
     )
     paginator = Paginator(field_trips_list, ITEMS_PER_PAGE)
     page = request.GET.get('page')
     field_trips = paginator.get_page(page)
-    return render(request, 'field_trips/index.html', {
+    title = "My {} Field Trips".format(FieldTrip.lookup_status(status))
+    return render(request, 'field_trips/list.html', {
+        'title': title,
         'field_trips': field_trips,
         'fields': ['id', 'destination', 'departing', 'submitted'],
     })
@@ -36,6 +51,8 @@ def calendar(request):
         .objects
         .filter(departing__year=year)
         .filter(departing__month=month)
+        .filter(status__in=[FieldTrip.IN_PROGRESS, FieldTrip.APPROVED,
+            FieldTrip.PENDING])
     )
     events = []
     for field_trip in field_trips:
