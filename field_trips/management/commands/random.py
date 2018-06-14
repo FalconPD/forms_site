@@ -3,6 +3,7 @@ import datetime
 
 from django.core.management.base import BaseCommand, CommandError
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.files.base import ContentFile
 
 from field_trips.models import FieldTrip, AdminOption, User, Grade, Building
 from field_trips.models import Discipline, Vehicle
