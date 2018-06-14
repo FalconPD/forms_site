@@ -16,7 +16,7 @@ django-heroku = "*"
 python-dotenv = "*"
 django-storages = "*"
 "boto3" = "*"
-django-url-tools = "*"
+"django-url-tools-py3" = "*"
 
 
 [dev-packages]
