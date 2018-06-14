@@ -44,7 +44,7 @@ class Command(BaseCommand):
         if random.random() < 0.25:
             extra_vehicles = Vehicle.objects.order_by('?')[:random.randint(1,2)]
         discipline = Discipline.objects.order_by('?').first()
-        test_file = SimpleUploadedFile('test.txt', b'test file')
+        test_file = ContentFile("This is a test file.")
         roster = test_file
         directions = test_file
 
