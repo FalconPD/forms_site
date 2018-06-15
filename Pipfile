@@ -14,9 +14,9 @@ gunicorn = "*"
 django-heroku = "*"
 "psycopg2" = "*"
 python-dotenv = "*"
-django-storages = "*"
 "boto3" = "*"
 "django-url-tools-py3" = "*"
+"django-s3-storage" = "*"
 
 
 [dev-packages]

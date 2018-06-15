@@ -7,8 +7,6 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 
-from forms_site.storage_backends import PrivateMediaStorage
-
 class Grade(models.Model):
     name = models.CharField(max_length=64)
     code = models.CharField(max_length=8)
@@ -110,8 +108,7 @@ class FieldTrip(models.Model):
     group = models.CharField("Class / Group / Club", max_length=64)
     grades = models.ManyToManyField(Grade)
     building = models.ForeignKey(Building, on_delete=models.CASCADE)
-    roster = models.FileField(upload_to="field_trips/",
-        storage=PrivateMediaStorage())
+    roster = models.FileField(upload_to="field_trips/")
     itinerary = models.TextField(help_text=
         ("Please include time at destination, lunch arrangements, and "
          "additional stops."))
@@ -121,8 +118,7 @@ class FieldTrip(models.Model):
     returning = models.DateTimeField("Date and Time Returning to School")
 
     # Transportation
-    directions = models.FileField(upload_to="field_trips/",
-        storage=PrivateMediaStorage())
+    directions = models.FileField(upload_to="field_trips/")
     buses = models.IntegerField("Number of Buses Required", help_text="Each bus seats 52 people.")
     extra_vehicles = models.ManyToManyField(Vehicle, blank=True,
         verbose_name="Additional Vehicles Required")

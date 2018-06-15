@@ -1,5 +1,4 @@
 import os
-import django_heroku
 from dotenv import load_dotenv
 load_dotenv(dotenv_path='.env')
 
@@ -31,7 +30,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.microsoft',
     'url_tools',
-    'storages',
+    'django_s3_storage',
 ]
 
 MIDDLEWARE = [
@@ -116,28 +115,29 @@ AUTHENTICATION_BACKENDS = (
 SITE_ID = 1
 SOCIALACCOUNT_ADAPTER = 'forms_site.adapters.OverrideSocialAccountAdapter'
 LOGIN_URL = '/accounts/microsoft/login'
-#MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-#MEDIA_URL = '/media/'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 TEMPLATE_CONTEXT_PROCESSORS = (
     'url_tools.context_processors.current_url',
 )
 
+# django-s3-storage settings
+DEFAULT_FILE_STORAGE = 'django_s3_storage.storage.S3Storage'
+STATICFILES_STORAGE = 'django_s3_storage.storage.StaticS3Storage'
+STATIC_URL = 'http://s3.amazonaws.com/' + os.getenv('AWS_S3_BUCKET_NAME') + '/'
+
+AWS_REGION = "us-east-1"
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = 'forms-site'
-AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-AWS_S3_OBJECT_PARAMETERS = { 'CacheControl': 'max-age=86400' }
 
-AWS_STATIC_LOCATION = 'static'
-STATICFILES_STORAGE = 'forms_site.storage_backends.StaticStorage'
-STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_STATIC_LOCATION)
+AWS_S3_BUCKET_NAME = os.getenv('AWS_S3_BUCKET_NAME')
+AWS_S3_ADDRESSING_STYLE = 'auto'
+AWS_S3_BUCKET_AUTH = True
+AWS_S3_MAX_AGE_SECONDS = 60 * 60
+AWS_S3_KEY_PREFIX = 'media'
 
-AWS_PUBLIC_MEDIA_LOCATION = 'media/public'
-DEFAULT_FILE_STORAGE = 'forms_site.storage_backends.PublicMediaStorage'
-
-AWS_PRIVATE_MEDIA_LOCATION = 'media/private'
-PRIVATE_FILE_STORAGE = 'forms_site.storage_backends.PrivateMediaStorage'
+AWS_S3_BUCKET_NAME_STATIC = os.getenv('AWS_S3_BUCKET_NAME')
+AWS_S3_BUCKET_AUTH_STATIC = False
+AWS_S3_KEY_PREFIX_STATIC = 'static'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
@@ -145,4 +145,7 @@ PRIVATE_FILE_STORAGE = 'forms_site.storage_backends.PrivateMediaStorage'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
-django_heroku.settings(locals())
+
+# Heroku settings
+import django_heroku
+django_heroku.settings(locals(), staticfiles=False)

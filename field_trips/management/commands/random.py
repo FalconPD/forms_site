@@ -1,9 +1,9 @@
 import random
 import datetime
+import tempfile
 
 from django.core.management.base import BaseCommand, CommandError
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.core.files.base import ContentFile
 
 from field_trips.models import FieldTrip, AdminOption, User, Grade, Building
 from field_trips.models import Discipline, Vehicle
@@ -45,7 +45,7 @@ class Command(BaseCommand):
         if random.random() < 0.25:
             extra_vehicles = Vehicle.objects.order_by('?')[:random.randint(1,2)]
         discipline = Discipline.objects.order_by('?').first()
-        test_file = ContentFile("This is a test file.")
+        test_file = SimpleUploadedFile(name="test", content=None)
         roster = test_file
         directions = test_file
 
