@@ -104,3 +104,8 @@ media/
 field_trips/fixtures/social_app.json
 staticfiles
 .swp
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
