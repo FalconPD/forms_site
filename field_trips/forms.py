@@ -21,11 +21,13 @@ class CreateForm(FieldTripForm):
     # to specify it
     departing = forms.DateTimeField(
         widget=forms.DateInput(format=DATETIME_FORMAT),
-        input_formats=(DATETIME_FORMAT,)
+        input_formats=(DATETIME_FORMAT,),
+        required=False,
     )
     returning = forms.DateTimeField(
         widget=forms.DateInput(format=DATETIME_FORMAT),
-        input_formats=(DATETIME_FORMAT,)
+        input_formats=(DATETIME_FORMAT,),
+        required=False,
     )
 
     class Meta(FieldTripForm.Meta):
@@ -34,20 +36,32 @@ class CreateForm(FieldTripForm):
             'buses', 'extra_vehicles', 'costs', 'funds', 'anticipatory',
             'purpose', 'standards', 'building', 'discipline']
 
-    # This makes sure the departure is withing the departure window set by the
-    # admin
-    def clean_departing(self):
+    def clean(self):
+        cleaned_data = super().clean()
+
+        # Do't validate drafts
+        if self.instance.status == FieldTrip.DRAFT:
+            return
+
+        # make sure nothing is blank
+        validation_error = forms.ValidationError("This field is required")
+        for field in self.Meta.fields:
+            if self.cleaned_data[field] == '':
+                self.add_error(field, validation_error)
+
+        # make sure the departure is within the admin departure window
         admin_option = AdminOption.objects.get()
+        departing = self.cleaned_data['departing']
         start = admin_option.window_start
         end = admin_option.window_end
-        departing = self.cleaned_data['departing']
         if departing > end or departing < start:
-            raise forms.ValidationError(
+            validation_error = forms.ValidationError(
                 "Departure must be between {} and {}".format(
                     timezone.localtime(start).strftime(DATETIME_FORMAT),
                     timezone.localtime(end).strftime(DATETIME_FORMAT))
             )
-        return departing
+            self.add_error('departing', validation_error)
+
 
 class NurseForm(FieldTripForm):
     """

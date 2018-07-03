@@ -43,7 +43,13 @@
 {% if form %}
     <div class="row">
         <div class="col-md text-center">
-            <button type="submit" class="btn btn-primary">Submit</button>
+            {% for name, text in buttons %}
+            <button type="submit"
+             class="btn {% if forloop.first %}btn-primary{% endif %}"
+             name="{{ name }}">
+                {{ text }}
+            </button>
+            {% endfor %}
         </div>
     </div>
     </form>

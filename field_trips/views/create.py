@@ -24,10 +24,17 @@ def create(request):
         ("Funding", FORMS + 'funding.html'),
         ("Curriculum", FORMS + 'curriculum.html'),
     )
+    buttons = (
+        ('submit', "Submit"),
+        ('draft', "Save as Draft"),
+    )
     ChaperoneFormSet = inlineformset_factory(FieldTrip, Chaperone, extra=1,
         form=ChaperoneForm)
     if request.method == 'POST':
         field_trip = FieldTrip(submitter=request.user)
+        # status defaults to IN_PROGRESS, make it DRAFT for a draft
+        if 'draft' in request.POST:
+            field_trip.status = FieldTrip.DRAFT
         form = CreateForm(request.POST, request.FILES, instance=field_trip)
         chaperones = ChaperoneFormSet(request.POST, instance=field_trip)
         if form.is_valid() and chaperones.is_valid():
@@ -40,6 +47,7 @@ def create(request):
     return render(request, 'field_trips/show_cards.html', {
         'title': title,
         'cards': cards,
+        'buttons': buttons,
         'form': form,
         'chaperones': chaperones,
         'enctype': "multipart/form-data",

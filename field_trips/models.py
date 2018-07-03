@@ -104,22 +104,24 @@ class FieldTrip(models.Model):
     # General Info
     submitter = models.ForeignKey(User, on_delete=models.CASCADE)
     submitted = models.DateTimeField("Submitted", auto_now_add=True)
-    destination = models.CharField(max_length=64)
-    group = models.CharField("Class / Group / Club", max_length=64)
-    grades = models.ManyToManyField(Grade)
-    building = models.ForeignKey(Building, on_delete=models.CASCADE)
-    roster = models.FileField(upload_to="field_trips/")
+    destination = models.CharField(max_length=64, blank=True)
+    group = models.CharField("Class / Group / Club", max_length=64, blank=True)
+    grades = models.ManyToManyField(Grade, blank=True)
+    building = models.ForeignKey(Building, on_delete=models.CASCADE, blank=True)
+    roster = models.FileField(upload_to="field_trips/", blank=True)
     itinerary = models.TextField(help_text=
         ("Please include time at destination, lunch arrangements, and "
-         "additional stops."))
-    pupils = models.IntegerField("Number of Pupils")
-    teachers = models.IntegerField("Number of Teachers")
-    departing = models.DateTimeField("Date and Time of Departure")
-    returning = models.DateTimeField("Date and Time Returning to School")
+         "additional stops."), blank=True)
+    pupils = models.IntegerField("Number of Pupils", blank=True, null=True)
+    teachers = models.IntegerField("Number of Teachers", blank=True, null=True)
+    departing = models.DateTimeField("Date and Time of Departure", blank=True,
+        null=True)
+    returning = models.DateTimeField("Date and Time Returning to School",
+        blank=True, null=True)
 
     # Transportation
-    directions = models.FileField(upload_to="field_trips/")
-    buses = models.IntegerField("Number of Buses Required", help_text="Each bus seats 52 people.")
+    directions = models.FileField(upload_to="field_trips/", blank=True)
+    buses = models.IntegerField("Number of Buses Required", help_text="Each bus seats 52 people.", blank=True)
     extra_vehicles = models.ManyToManyField(Vehicle, blank=True,
         verbose_name="Additional Vehicles Required")
     transported_by = models.CharField(max_length=64, blank=True)
@@ -133,19 +135,24 @@ class FieldTrip(models.Model):
         (STUDENT_FUNDED, 'Student Funded'),
     )
     costs = models.TextField(help_text=
-        "Please describe all costs in detail. Buses are $75 per hour.")
-    funds = models.CharField("Source of Funds", max_length=8, choices=SOURCE_OF_FUNDS_CHOICES)
+        "Please describe all costs in detail. Buses are $75 per hour.",
+        blank=True)
+    funds = models.CharField("Source of Funds", max_length=8,
+        choices=SOURCE_OF_FUNDS_CHOICES, blank=True)
 
     # Curricular Tie Ins
     discipline = models.ForeignKey(Discipline, on_delete=models.CASCADE,
-        verbose_name="Discipline",
-        help_text="Used to select supervisor for approval")
-    standards = models.TextField("Unit(s) of Study / Curriculum Standards Addressed During Trip",
-        help_text="Please be specific.")
+        help_text="Used to select supervisor for approval", blank=True,
+        verbose_name="Discipline")
+    standards = models.TextField(
+        "Unit(s) of Study / Curriculum Standards Addressed During Trip",
+        help_text="Please be specific.", blank=True)
     anticipatory = models.TextField("Description of Anticipatory Activity",
-        help_text="To be completed with students in advance of trip")
+        help_text="To be completed with students in advance of trip",
+        blank=True)
     purpose = models.TextField("Description of Educational Value of Trip",
-        help_text="What will the students learn, and HOW?")
+        help_text="What will the students learn, and HOW?",
+        blank=True)
 
     # Nurse
     nurse_required = models.NullBooleanField()

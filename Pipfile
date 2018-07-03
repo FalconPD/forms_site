@@ -7,11 +7,10 @@ name = "pypi"
 
 [packages]
 
-django = "*"
+Django = "*"
 django-widget-tweaks = "*"
 django-allauth = "*"
 gunicorn = "*"
-django-heroku = "*"
 "psycopg2" = "*"
 python-dotenv = "*"
 "boto3" = "*"
