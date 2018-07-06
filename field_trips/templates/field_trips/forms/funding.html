@@ -1,8 +1,41 @@
-<div class="row">
-    <div class="col-lg">
-        {% include "field_trips/forms/form_group.html" with field=form.costs %}
+{% include "field_trips/forms/funding_row.html" with field=form.funds %}
+{% include "field_trips/forms/funding_row.html" with field=form.lodging currency=True %}
+{% include "field_trips/forms/funding_row.html" with field=form.airfare currency=True %}
+{% include "field_trips/forms/funding_row.html" with field=form.baggage currency=True %}
+{% include "field_trips/forms/funding_row.html" with field=form.mileage currency=True %}
+{% include "field_trips/forms/funding_row.html" with field=form.tolls currency=True %}
+{% include "field_trips/forms/funding_row.html" with field=form.parking currency=True %}
+{% include "field_trips/forms/funding_row.html" with field=form.shuttle currency=True %}
+{% include "field_trips/forms/funding_row.html" with field=form.stipend currency=True %}
+{% include "field_trips/forms/funding_row.html" with field=form.registration currency=True %}
+{% include "field_trips/forms/funding_row.html" with field=form.meals currency=True %}
+{% include "field_trips/forms/funding_row.html" with field=form.ticket currency=True %}
+{% include "field_trips/forms/funding_row.html" with field=form.other currency=True %}
+<div class="form-group row mb-0 mt-2">
+    <div class="col-sm-2">
+        <label for="id_funds_total">Total:</label>
     </div>
-    <div class="col-sm-4">
-        {% include "field_trips/forms/form_group.html" with field=form.funds %}
+    <div class="col-sm-10 input-group">
+        <div class="input-group-prepend">
+            <div class="input-group-text">$</div>
+        </div>
+        <input id="id_funds_total" class="form-control" step="0.01" readonly>
     </div>
 </div>
+<script>
+    $(function() {
+        function sum_funds() {
+            var total = 0.00;
+
+            $(".funds").each(function() {
+                total += parseFloat($(this).val());
+            });
+            return total.toFixed(2);
+        }
+        
+        $("#id_funds_total").val(sum_funds());
+        $(".funds").change(function() {
+            $("#id_funds_total").val(sum_funds());
+        });
+    });
+</script>

@@ -33,13 +33,15 @@ class CreateForm(FieldTripForm):
     class Meta(FieldTripForm.Meta):
         fields = ['destination', 'group', 'grades', 'roster', 'itinerary',
             'pupils', 'teachers', 'departing', 'returning', 'directions',
-            'buses', 'extra_vehicles', 'costs', 'funds', 'anticipatory',
-            'purpose', 'standards', 'building', 'discipline']
+            'buses', 'extra_vehicles', 'funds', 'lodging', 'airfare', 'baggage',
+            'mileage', 'tolls', 'parking', 'shuttle', 'stipend', 'registration',
+            'meals', 'ticket', 'other', 'anticipatory', 'purpose', 'standards',
+            'building', 'discipline']
 
     def clean(self):
         cleaned_data = super().clean()
 
-        # Do't validate drafts
+        # Don't validate drafts
         if self.instance.status == FieldTrip.DRAFT:
             return
 
@@ -87,7 +89,9 @@ class PrincipalForm(FieldTripForm):
     ability to adjust them here
     """
     class Meta(FieldTripForm.Meta):
-        fields = ['costs', 'funds']
+        fields = ['funds', 'lodging', 'airfare', 'baggage', 'mileage', 'tolls',
+            'parking', 'shuttle', 'stipend', 'registration', 'meals', 'ticket',
+            'other']
 
 class SupervisorForm(FieldTripForm):
     """
@@ -104,7 +108,9 @@ class AssistantSuperintendentForm(FieldTripForm):
     curriculum sections.
     """
     class Meta(FieldTripForm.Meta):
-        fields = ['costs', 'funds', 'anticipatory', 'purpose', 'standards']
+        fields = ['funds', 'lodging', 'airfare', 'baggage', 'mileage', 'tolls',
+            'parking', 'shuttle', 'stipend', 'registration', 'meals', 'ticket',
+            'other', 'anticipatory', 'purpose', 'standards']
 
 class TransportationForm(FieldTripForm):
     """
@@ -167,9 +173,11 @@ class AdminForm(FieldTripForm):
         fields = ['submitter', 'destination', 'group', 'grades', 'building',
             'roster', 'itinerary', 'pupils', 'teachers', 'departing',
             'returning', 'directions', 'buses', 'extra_vehicles',
-            'transported_by', 'transportation_comments', 'costs', 'funds',
-            'discipline', 'standards', 'anticipatory', 'purpose',
-            'nurse_required', 'nurse_comments', 'nurse_name', 'status']
+            'transported_by', 'transportation_comments', 'funds', 'lodging',
+            'airfare', 'baggage', 'mileage', 'tolls', 'parking', 'shuttle',
+            'stipend', 'registration', 'meals', 'ticket', 'other', 'discipline',
+            'standards', 'anticipatory', 'purpose', 'nurse_required',
+            'nurse_comments', 'nurse_name', 'status']
 
 class AdminOptionForm(forms.ModelForm):
     """

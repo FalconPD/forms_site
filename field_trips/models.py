@@ -134,11 +134,23 @@ class FieldTrip(models.Model):
         (BUILDING_BUDGET, 'Building Budget'),
         (STUDENT_FUNDED, 'Student Funded'),
     )
-    costs = models.TextField(help_text=
-        "Please describe all costs in detail. Buses are $75 per hour.",
-        blank=True)
     funds = models.CharField("Source of Funds", max_length=8,
         choices=SOURCE_OF_FUNDS_CHOICES, blank=True)
+    lodging = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+    airfare = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+    baggage = models.DecimalField("Extra Baggage", max_digits=8, default=0.00,
+        decimal_places=2)
+    mileage = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+    tolls = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+    parking = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+    shuttle = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+    stipend = models.DecimalField("Overnight Stipend", max_digits=8,
+        decimal_places=2, default=0.00)
+    registration = models.DecimalField(max_digits=8, decimal_places=2,
+        default=0.00)
+    meals = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+    ticket = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+    other = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
 
     # Curricular Tie Ins
     discipline = models.ForeignKey(Discipline, on_delete=models.CASCADE,
