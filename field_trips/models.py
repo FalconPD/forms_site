@@ -192,6 +192,11 @@ class FieldTrip(models.Model):
     def total(self):
         return self.chaperone_set.count() + self.pupils + self.teachers
 
+    def total_cost(self):
+        return (self.lodging + self.airfare + self.baggage + self.mileage +
+            self.tolls + self.parking + self.shuttle + self.stipend +
+            self.registration + self.meals + self.ticket + self.other)
+
     @classmethod
     def lookup_status(cls, status):
         for choice, text in cls.STATUS_CHOICES:

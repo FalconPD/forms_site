@@ -1,10 +1,69 @@
 <div class="row">
-    <div class="col-md">
-        <span class="label">Costs:</span>
-        {{ field_trip.costs }}
-    </div>
-    <div class="col-md">
-        <span class="label">Source of Funds:</span>
-        {{ field_trip.funds }}
-    </div>
+    <div class="col-sm-2"><span class="label">Source of Funds:</span></div>
+    <div class="col-sm-10">{{ field_trip.funds }}</div>
+</div>
+
+<div class="row">
+    <div class="col-sm-2"><span class="label">Lodging:</span></div>
+    <div class="col-sm-10">${{ field_trip.lodging }}</div>
+</div>
+
+<div class="row">
+    <div class="col-sm-2"><span class="label">Airfare:</span></div>
+    <div class="col-sm-10">${{ field_trip.airfare }}</div>
+</div>
+
+<div class="row">
+    <div class="col-sm-2"><span class="label">Baggage:</span></div>
+    <div class="col-sm-10">${{ field_trip.baggage }}</div>
+</div>
+
+<div class="row">
+    <div class="col-sm-2"><span class="label">Mileage:</span></div>
+    <div class="col-sm-10">${{ field_trip.mileage }}</div>
+</div>
+
+<div class="row">
+    <div class="col-sm-2"><span class="label">Tolls:</span></div>
+    <div class="col-sm-10">${{ field_trip.tolls }}</div>
+</div>
+
+<div class="row">
+    <div class="col-sm-2"><span class="label">Parking:</span></div>
+    <div class="col-sm-10">${{ field_trip.parking }}</div>
+</div>
+
+<div class="row">
+    <div class="col-sm-2"><span class="label">Shuttle:</span></div>
+    <div class="col-sm-10">${{ field_trip.shuttle }}</div>
+</div>
+
+<div class="row">
+    <div class="col-sm-2"><span class="label">Stipend:</span></div>
+    <div class="col-sm-10">${{ field_trip.stipend }}</div>
+</div>
+
+<div class="row">
+    <div class="col-sm-2"><span class="label">Registration:</span></div>
+    <div class="col-sm-10">${{ field_trip.registration }}</div>
+</div>
+
+<div class="row">
+    <div class="col-sm-2"><span class="label">Meals:</span></div>
+    <div class="col-sm-10">${{ field_trip.meals }}</div>
+</div>
+
+<div class="row">
+    <div class="col-sm-2"><span class="label">Ticket:</span></div>
+    <div class="col-sm-10">${{ field_trip.ticket }}</div>
+</div>
+
+<div class="row">
+    <div class="col-sm-2"><span class="label">Other:</span></div>
+    <div class="col-sm-10">${{ field_trip.other }}</div>
+</div>
+
+<div class="row">
+    <div class="col-sm-2"><span class="label">Total:</span></div>
+    <div class="col-sm-10">${{ field_trip.total_cost }}</div>
 </div>
